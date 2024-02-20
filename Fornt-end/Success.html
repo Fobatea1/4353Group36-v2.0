@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,74 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>You've successfully logged in!</h1>
+    <div class="welcome-container">
+        <h2>Welcome</h2>
+        <p id="welcomeMessage" class="white-text"></p>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        document.getElementById('welcomeMessage').innerText = 'Hello, ' + username + '!';
+    </script>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Success Page</title>
+   
+</head>
+<body>
+    <h2>Welcome, <span id="userGreeting"></span>! Please enter your details:</h2>
+    First Name: <input type="text" id="firstName" maxlength="50" required><br>
+    Last Name: <input type="text" id="lastName" maxlength="50" required><br>
+    Address 1: <input type="text" id="address1" maxlength="100" required><br>
+    Address 2: <input type="text" id="address2" maxlength="100"><br>
+    City: <input type="text" id="city" maxlength="100" required><br>
+    State: <input type="text" id="state" maxlength="100" required><br>
+    Zipcode: <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" maxlength="9" required><br>
+    <button onclick="saveUserInfo()">Save Info</button><br><br>
+
+    <button onclick="displayUserInfo()">Display Saved Information</button>
+    <div id="displayInfo" style="display:none;"></div>
+
+    <script>
+        document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
+
+        function saveUserInfo() {
+            var userInfo = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                address1: document.getElementById('address1').value,
+                address2: document.getElementById('address2').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipcode: document.getElementById('zipcode').value
+            };
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            alert('User Information Saved Successfully!');
+        }
+
+        function displayUserInfo() {
+            var storedInfo = localStorage.getItem('userInfo');
+            if(storedInfo) {
+                var userInfo = JSON.parse(storedInfo);
+                document.getElementById('displayInfo').innerHTML = `
+                    <p>First Name: ${userInfo.firstName}</p>
+                    <p>Last Name: ${userInfo.lastName}</p>
+                    <p>Address 1: ${userInfo.address1}</p>
+                    <p>Address 2: ${userInfo.address2}</p>
+                    <p>City: ${userInfo.city}</p>
+                    <p>State: ${userInfo.state}</p>
+                    <p>Zipcode: ${userInfo.zipcode}</p>
+                `;
+                document.getElementById('displayInfo').style.display = 'block';
+            } else {
+                alert('No information saved.');
+            }
+        }
+    </script>
 </body>
 </html>

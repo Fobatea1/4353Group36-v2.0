@@ -22,12 +22,19 @@ function loginUser(){
     const password = document.getElementById('loginPassword').value;
 
     if (username === storedUsername && password === storedPassword) {
+        window.location.href = 'Success.html?username=' + encodeURIComponent(username);
         alert('Login Successful!');
+        
         wrapper.classList.remove('active-popup'); //closes the form
         // Redirect or display login success message here
+
+        
+
     } else {
         alert('Invalid Username or Password.');
     }
+
+    
 
     
 }
@@ -41,3 +48,4 @@ function registerUser(){
     alert('Registration Successful. You can now log in.');
     wrapper.classList.add('active-popup');
 }
+
