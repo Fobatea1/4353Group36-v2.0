@@ -1,34 +1,12 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Success</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="welcome-container">
-        <h2>Welcome</h2>
-        <p id="welcomeMessage" class="white-text"></p>
-    </div>
-    <script src="script.js"></script>
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const username = urlParams.get('username');
-        document.getElementById('welcomeMessage').innerText = 'Hello, ' + username + '!';
-    </script>
-</body>
-</html>
--->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Success Page</title>
-   
 </head>
 <body>
-    <h2>Welcome, <span id="userGreeting"></span>! Please enter your details:</h2>
+    <h2>Welcome, <span id="userGreeting"></span>!</h2>
+    <p>Please enter or update your details:</p>
+    
     First Name: <input type="text" id="firstName" maxlength="50" required><br>
     Last Name: <input type="text" id="lastName" maxlength="50" required><br>
     Address 1: <input type="text" id="address1" maxlength="100" required><br>
@@ -36,10 +14,12 @@
     City: <input type="text" id="city" maxlength="100" required><br>
     State: <input type="text" id="state" maxlength="100" required><br>
     Zipcode: <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" maxlength="9" required><br>
-    <button onclick="saveUserInfo()">Save Info</button><br><br>
+    <button onclick="saveUserInfo()">Save Info</button>
 
-    <button onclick="displayUserInfo()">Display Saved Information</button>
-    <div id="displayInfo" style="display:none;"></div>
+    <div id="savedInfoSection" style="display:none;">
+        <h3>Saved Information:</h3>
+        <div id="displayInfo"></div>
+    </div>
 
     <script>
         document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
@@ -56,6 +36,7 @@
             };
             localStorage.setItem('userInfo', JSON.stringify(userInfo));
             alert('User Information Saved Successfully!');
+            displayUserInfo(); // Show the saved info after saving
         }
 
         function displayUserInfo() {
@@ -71,9 +52,9 @@
                     <p>State: ${userInfo.state}</p>
                     <p>Zipcode: ${userInfo.zipcode}</p>
                 `;
-                document.getElementById('displayInfo').style.display = 'block';
+                document.getElementById('savedInfoSection').style.display = 'block'; // Show the section only after saving
             } else {
-                alert('No information saved.');
+                document.getElementById('savedInfoSection').style.display = 'none';
             }
         }
     </script>
