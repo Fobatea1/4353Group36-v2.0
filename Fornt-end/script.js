@@ -25,7 +25,6 @@ function loginUser(){
         window.location.href = 'Success.html?username=' + encodeURIComponent(username);
         alert('Login Successful!');
         
-        wrapper.classList.remove('active-popup'); //closes the form
         // Redirect or display login success message here
 
         

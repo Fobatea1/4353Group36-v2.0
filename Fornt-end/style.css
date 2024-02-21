@@ -211,6 +211,7 @@ header {
 
 }
 
+/*moves label up when textbox is clicked on*/
 .input-box input:focus~label,
 .input-box input:not(:placeholder-shown):valid~label {
     top: -5px;
