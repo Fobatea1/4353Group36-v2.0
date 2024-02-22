@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Fuel History</title>
+    <!-- <link rel="stylesheet" href="style.css">  Ensure this link is correct -->
+</head>
+<body>
+    <h2>Fuel Request History</h2>
+    <div id="fuelHistoryContainer"></div>
+
+    <!-- "View Profile" Button -->
+    <button onclick="viewProfile()" class="btn">View Profile</button>
+
+    <script>
+        function displayFuelHistory() {
+            const historyContainer = document.getElementById('fuelHistoryContainer');
+            const fuelRequestData = localStorage.getItem('fuelRequestData');
+
+            if (fuelRequestData) {
+                const requestData = JSON.parse(fuelRequestData);
+
+                // Construct a string to display the data
+                let displayText = `<p>Gallons Requested: ${requestData.gallonsRequested}</p>
+                                    <p>Delivery Address: ${requestData.deliveryAddress}</p>
+                                    <p>Delivery Date: ${requestData.deliveryDate}</p>`;
+
+                // Update the container with the request data
+                historyContainer.innerHTML = displayText;
+            } else {
+                // Show 'No Previous History' if there's no data
+                historyContainer.innerHTML = '<p>No Previous History</p>';
+            }
+        }
+
+        function viewProfile() {
+            // Redirect to Profile.html
+            window.location.href = 'Profile.html';
+        }
+
+        // Call the function to display the fuel history when the page loads
+        window.onload = displayFuelHistory;
+    </script>
+</body>
+</html>
