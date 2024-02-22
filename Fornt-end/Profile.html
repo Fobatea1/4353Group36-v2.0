@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>User Profile</title>
-    <link rel="stylesheet" href="ProfileStyle.css"> <!-- Link to Style.css -->
+    <link rel="stylesheet" href="ProfileStyle.css"> <!-- Ensure this link is correct -->
 </head>
 <body>
     <header>
@@ -15,18 +15,22 @@
             <button class="btnLogin-popup">Login</button>
         </nav>
     </header>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     
+    <!-- Spacing for header -->
+    <div style="height: 100px;"></div> <!-- Adjust the height as needed to accommodate the fixed header -->
+
     <h2>User Profile</h2>
     <div id="savedInfoSection">
         <h3>Saved Information:</h3>
         <div id="displayInfo"></div>
     </div>
-    <button onclick="editUserInfo()" class="btn">Edit Info</button>
+
+    <!-- Button Container for alignment -->
+    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+        <button onclick="window.location.href='RequestFuelQuota.html'" class="btn">Request Fuel Quota</button>
+        <button onclick="editUserInfo()" class="btn">Edit Info</button>
+        <button onclick="window.location.href='ViewFuelHistory.html'" class="btn">View Fuel History</button>
+    </div>
 
     <script>
         function displayUserInfo() {
