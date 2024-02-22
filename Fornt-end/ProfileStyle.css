@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Muli', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('20240211_233718.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding-top: 100px; /* Space for fixed header */
+    color: #fff; /* Ensuring all text is white */
+}
+
+/* Header including "hey" and "login" */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 200px;
+    background: greenyellow; /* Header background */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000; /* High z-index to keep the header above other content */
+}
+
+.logo {
+    font-size: 3em; /* Logo text size */
+    color: #345; /* Logo text color */
+}
+
+.navigation a, .navigation .btnLogin-popup {
+    font-size: 1.1em;
+    color: #fff; /* Text color for navigation and login button */
+    text-decoration: none;
+    margin-left: 40px; /* Spacing between navigation items */
+    transition: color 0.3s; /* Smooth transition for hover effects */
+}
+
+.navigation .btnLogin-popup {
+    padding: 10px 15px; /* Padding inside the login button */
+    border: 2px solid #fff; /* Border color for the login button */
+    border-radius: 5px; /* Rounded corners for the login button */
+    cursor: pointer; /* Cursor changes to pointer to indicate clickable */
+    background: transparent; /* Transparent background for the login button */
+}
+
+.navigation .btnLogin-popup:hover {
+    background: #fff; /* Background color change on hover */
+    color: #162938; /* Text color change on hover */
+}
+
+/* Ensuring double line spacing for text */
+#savedInfoSection, #displayInfo p {
+    line-height: 3; /* Double line spacing for readability */
+}
+
+#savedInfoSection {
+    margin-top: 80px; /* Adjusted margin to avoid overlap with the header */
+    padding: 40px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 20px; /* Rounded corners for aesthetic */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+}
+
+.btn {
+    background: greenyellow; /* Button background color */
+    color: #234; /* Button text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners for the button */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 1em; /* Text size inside the button */
+    cursor: pointer; /* Cursor changes to pointer to indicate clickable */
+    margin-top: 20px; /* Margin above the button for spacing */
+}
+
+.btn:hover {
+    background-color: #fff; /* Background color on hover */
+    color: greenyellow; /* Text color on hover */
+}
