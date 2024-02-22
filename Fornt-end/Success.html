@@ -19,7 +19,7 @@
         <div class="form-box information">
             <h2>Welcome, <span id="userGreeting"></span>!</h2>
             <h2>Please enter or update your details:</h2>
-            <form action = "#">
+            <form>
                 <div class="input-box">
                     <input type="text" id="firstName" maxlength="50" required>
                     <label>First Name</label>
@@ -30,32 +30,27 @@
                 </div>
                 <div class="input-box">
                     <input type="text" id="address1" maxlength="100" required>
-                    <label>Address 1: </label>
+                    <label>Address 1</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="address2" placeholder="" maxlength="100" >
-                    <label>Address 2: </label>
+                    <input type="text" id="address2" maxlength="100">
+                    <label>Address 2</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="city" maxlength="100" required>
-                    <label>City: </label>
+                    <label>City</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="state" maxlength="100" required>
-                    <label>State: </label>
+                    <label>State</label>
                 </div>
-
                 <div class="input-box">
                     <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" maxlength="9" required>
-                    <label>Zipcode: </label>
+                    <label>Zipcode</label>
                 </div>
-                <button onclick="saveUserInfo()" class = "btn">Save Info</button>
+                <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>
         </div>
-    </div>
-    <div id="savedInfoSection" style="display:none;">
-        <h3>Saved Information:</h3>
-        <div id="displayInfo"></div>
     </div>
 
     <script>
@@ -73,26 +68,8 @@
             };
             localStorage.setItem('userInfo', JSON.stringify(userInfo));
             alert('User Information Saved Successfully!');
-            displayUserInfo(); // Show the saved info after saving
-        }
-
-        function displayUserInfo() {
-            var storedInfo = localStorage.getItem('userInfo');
-            if(storedInfo) {
-                var userInfo = JSON.parse(storedInfo);
-                document.getElementById('displayInfo').innerHTML = `
-                    <p>First Name: ${userInfo.firstName}</p>
-                    <p>Last Name: ${userInfo.lastName}</p>
-                    <p>Address 1: ${userInfo.address1}</p>
-                    <p>Address 2: ${userInfo.address2}</p>
-                    <p>City: ${userInfo.city}</p>
-                    <p>State: ${userInfo.state}</p>
-                    <p>Zipcode: ${userInfo.zipcode}</p>
-                `;
-                document.getElementById('savedInfoSection').style.display = 'block'; // Show the section only after saving
-            } else {
-                document.getElementById('savedInfoSection').style.display = 'none';
-            }
+            // Optionally, redirect to Profile.html to view the saved information
+            window.location.href = 'Profile.html';
         }
     </script>
 </body>

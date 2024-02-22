@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+    <h2>User Profile</h2>
+    <div id="savedInfoSection">
+        <h3>Saved Information:</h3>
+        <div id="displayInfo"></div>
+    </div>
+    <button onclick="editUserInfo()" class="btn">Edit Info</button>
+
+    <script>
+        function displayUserInfo() {
+            var storedInfo = localStorage.getItem('userInfo');
+            if(storedInfo) {
+                var userInfo = JSON.parse(storedInfo);
+                document.getElementById('displayInfo').innerHTML = `
+                    <p>First Name: ${userInfo.firstName}</p>
+                    <p>Last Name: ${userInfo.lastName}</p>
+                    <p>Address 1: ${userInfo.address1}</p>
+                    <p>Address 2: ${userInfo.address2}</p>
+                    <p>City: ${userInfo.city}</p>
+                    <p>State: ${userInfo.state}</p>
+                    <p>Zipcode: ${userInfo.zipcode}</p>
+                `;
+            } else {
+                document.getElementById('displayInfo').innerHTML = "<p>No information saved.</p>";
+            }
+        }
+
+        function editUserInfo() {
+            window.location.href = 'Success.html'; // Redirect to Success.html for editing
+        }
+
+        displayUserInfo(); // Call this function when the page loads to display the user info
+    </script>
+</body>
+</html>
