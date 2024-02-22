@@ -9,9 +9,7 @@
     font-family: 'Muli', sans-serif;
 }
 
-
 body {
-    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,13 +21,11 @@ body {
         ),
         url('20240211_233718.jpg') no-repeat;
     background-size: cover;
-    
     background-position: center;
 }
 
 /*menu bar at the top*/
 header {
-    
     position: fixed;
     top: 0;
     left: 0;
@@ -43,7 +39,6 @@ header {
 }
 
 .logo {
-    
     font-size: 3em;
     color: #345;
     user-select: none;
