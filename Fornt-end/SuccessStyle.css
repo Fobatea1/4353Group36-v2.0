@@ -9,7 +9,9 @@
     font-family: 'Muli', sans-serif;
 }
 
+
 body {
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,11 +23,13 @@ body {
         ),
         url('20240211_233718.jpg') no-repeat;
     background-size: cover;
+    
     background-position: center;
 }
 
 /*menu bar at the top*/
 header {
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -39,6 +43,7 @@ header {
 }
 
 .logo {
+    
     font-size: 3em;
     color: #345;
     user-select: none;
@@ -91,6 +96,27 @@ header {
 }
 
 .navigation .btnLogin-popup:hover {
+    background: #fff;
+    color: #162938;
+}
+
+.navigation .btnRegister-popup{
+    width: 130px;
+    height: 50px;
+    background: transparent;
+    border: 2px solid #234;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #234;
+    font-weight: 500;
+    margin-left:40px;
+    transition: .5s;
+
+}
+
+.navigation .btnRegister-popup:hover {
     background: #fff;
     color: #162938;
 }
