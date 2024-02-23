@@ -79,48 +79,6 @@ header {
     
 }
 
-.navigation .btnLogin-popup{
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #234;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #234;
-    font-weight: 500;
-    margin-left:40px;
-    transition: .5s;
-
-}
-
-.navigation .btnLogin-popup:hover {
-    background: #fff;
-    color: #162938;
-}
-
-.navigation .btnRegister-popup{
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #234;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #234;
-    font-weight: 500;
-    margin-left:40px;
-    transition: .5s;
-
-}
-
-.navigation .btnRegister-popup:hover {
-    background: #fff;
-    color: #162938;
-}
-
 .informationWrapper{
     transform: translateY(50px);
     margin-top: 150px;
@@ -189,4 +147,22 @@ header {
 .input-box input:focus~label,
 .input-box input:not(:placeholder-shown):valid~label {
     top: -10px;
+}
+
+
+/* Updated .btn class for the "Save Info" button to look green */
+.btn {
+    background: greenyellow; /* Button background color */
+    color: #234; /* Button text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners for the button */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 1em; /* Text size inside the button */
+    cursor: pointer; /* Cursor changes to pointer to indicate clickable */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+}
+
+.btn:hover {
+    background-color: #fff; /* Background color on hover */
+    color: greenyellow; /* Text color on hover */
 }

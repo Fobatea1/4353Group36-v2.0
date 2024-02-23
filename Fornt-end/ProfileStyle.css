@@ -84,27 +84,6 @@ header {
     
 }
 
-.navigation .btnLogin-popup{
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #234;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #234;
-    font-weight: 500;
-    margin-left:40px;
-    transition: .5s;
-
-}
-
-.navigation .btnLogin-popup:hover {
-    background: #fff;
-    color: #162938;
-}
-
 /* Ensuring double line spacing for text */
 #savedInfoSection, #displayInfo p {
     line-height: 3; /* Double line spacing for readability */
@@ -132,4 +111,58 @@ header {
 .btn:hover {
     background-color: #fff; /* Background color on hover */
     color: greenyellow; /* Text color on hover */
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Muli', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('20240211_233718.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding-top: 100px;
+    color: #fff;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 200px;
+    background: greenyellow;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+}
+
+.logo {
+    font-size: 3em;
+    color: #345;
+    user-select: none;
+}
+
+/* Style for user greeting text color */
+#userGreeting {
+    color: black; /* Only this text will be black */
+}
+
+/* New style for the greeting text */
+.userGreeting {
+    color: black; /* Makes the "Welcome, User" text black */
+}
+
+#savedInfoSection, .btn {
 }
