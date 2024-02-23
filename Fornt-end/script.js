@@ -2,14 +2,18 @@ const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelector('.login-link');
 const registerLink = document.querySelector('.register-link');
 const btnLoginPopup = document.querySelector('.btnLogin-popup');
+const btnRegisterPopup = document.querySelector('.btnRegister-popup');
 const btnCloseLogin = document.querySelector('.icon-close'); /*query selector is the element that is responsible for the action*/
 
 registerLink.addEventListener('click', ()=> {wrapper.classList.add('active');});
 loginLink.addEventListener('click', ()=> {wrapper.classList.remove('active');});
 
 btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
+btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.remove('active');});
 btnCloseLogin.addEventListener('click', ()=> {wrapper.classList.remove('active-popup');});
 
+btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
+btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active');});
 
 //check if button works
 
@@ -47,4 +51,3 @@ function registerUser(){
     alert('Registration Successful. You can now log in.');
     wrapper.classList.add('active-popup');
 }
-
