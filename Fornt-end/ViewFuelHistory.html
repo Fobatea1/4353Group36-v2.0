@@ -2,14 +2,26 @@
 <html>
 <head>
     <title>View Fuel History</title>
-    <!-- <link rel="stylesheet" href="style.css">  Ensure this link is correct -->
+    <link rel="stylesheet" href="ViewHistory.css"> <!-- Ensure this link is correct -->
 </head>
 <body>
-    <h2>Fuel Request History</h2>
-    <div id="fuelHistoryContainer"></div>
+    <header>
+        <h2 class="logo">hey</h2>
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="Success.html">Success</a>
+            <a href="#">Services</a>
+            <a href="#">Quaso</a>
+            <button class="btnLogin-popup">Login</button>
+        </nav>
+    </header>
 
-    <!-- "View Profile" Button -->
-    <button onclick="viewProfile()" class="btn">View Profile</button>
+    <!-- Content wrapped inside historyWrapper for styling -->
+    <div class="historyWrapper">
+        <h2>Fuel Request History</h2>
+        <div id="fuelHistoryContainer"></div>
+        <button onclick="viewProfile()" class="btn">View Profile</button>
+    </div>
 
     <script>
         function displayFuelHistory() {
@@ -18,26 +30,19 @@
 
             if (fuelRequestData) {
                 const requestData = JSON.parse(fuelRequestData);
-
-                // Construct a string to display the data
                 let displayText = `<p>Gallons Requested: ${requestData.gallonsRequested}</p>
                                     <p>Delivery Address: ${requestData.deliveryAddress}</p>
                                     <p>Delivery Date: ${requestData.deliveryDate}</p>`;
-
-                // Update the container with the request data
                 historyContainer.innerHTML = displayText;
             } else {
-                // Show 'No Previous History' if there's no data
                 historyContainer.innerHTML = '<p>No Previous History</p>';
             }
         }
 
         function viewProfile() {
-            // Redirect to Profile.html
             window.location.href = 'Profile.html';
         }
 
-        // Call the function to display the fuel history when the page loads
         window.onload = displayFuelHistory;
     </script>
 </body>
