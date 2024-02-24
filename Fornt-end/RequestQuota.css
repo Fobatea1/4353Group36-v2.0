@@ -19,9 +19,9 @@ body {
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                url('20240211_233718.jpg') no-repeat center center fixed; /* Adjust the background image path as needed */
+                url('20240211_233718.jpg') no-repeat center center fixed; 
     background-size: cover;
-    padding-top: 100px; /* Adjust if necessary to accommodate your header */
+    padding-top: 100px; 
     color: #fff;
 }
 
