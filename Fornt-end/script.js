@@ -51,3 +51,18 @@ function registerUser(){
     alert('Registration Successful. You can now log in.');
     wrapper.classList.add('active-popup');
 }
+
+const registerButton = document.getElementById('registerButton');
+const loginButton = document.getElementById('loginButton');
+
+registerButton.addEventListener('click', function() {
+    // Clear user information from localStorage when Register is clicked
+    localStorage.removeItem('userInfo');
+    // Additional actions for registration can be added here
+});
+
+loginButton.addEventListener('click', function() {
+    // Clear user information from localStorage when Login is clicked
+    localStorage.removeItem('userInfo');
+    // Additional actions for login can be added here
+});

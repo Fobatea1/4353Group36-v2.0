@@ -78,5 +78,42 @@
             window.location.href = 'Profile.html';
         }
     </script>
+
+<script>
+    document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
+
+    function saveUserInfo() {
+        var userInfo = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            address1: document.getElementById('address1').value,
+            address2: document.getElementById('address2').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            zipcode: document.getElementById('zipcode').value
+        };
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        alert('User Information Saved Successfully!');
+        window.location.href = 'Profile.html';
+    }
+
+    // Function to populate the form with existing user info
+    function populateUserInfo() {
+        var storedInfo = localStorage.getItem('userInfo');
+        if(storedInfo) {
+            var userInfo = JSON.parse(storedInfo);
+            document.getElementById('firstName').value = userInfo.firstName || '';
+            document.getElementById('lastName').value = userInfo.lastName || '';
+            document.getElementById('address1').value = userInfo.address1 || '';
+            document.getElementById('address2').value = userInfo.address2 || '';
+            document.getElementById('city').value = userInfo.city || '';
+            document.getElementById('state').value = userInfo.state || '';
+            document.getElementById('zipcode').value = userInfo.zipcode || '';
+        }
+    }
+
+    // Call populateUserInfo when the page loads to fill in the form
+    window.onload = populateUserInfo;
+</script>
 </body>
 </html>
