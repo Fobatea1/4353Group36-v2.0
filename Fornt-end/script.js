@@ -2,14 +2,18 @@ const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelector('.login-link');
 const registerLink = document.querySelector('.register-link');
 const btnLoginPopup = document.querySelector('.btnLogin-popup');
+const btnRegisterPopup = document.querySelector('.btnRegister-popup');
 const btnCloseLogin = document.querySelector('.icon-close'); /*query selector is the element that is responsible for the action*/
 
 registerLink.addEventListener('click', ()=> {wrapper.classList.add('active');});
 loginLink.addEventListener('click', ()=> {wrapper.classList.remove('active');});
 
 btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
+btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.remove('active');});
 btnCloseLogin.addEventListener('click', ()=> {wrapper.classList.remove('active-popup');});
 
+btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
+btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active');});
 
 //check if button works
 
@@ -34,8 +38,6 @@ function loginUser(){
     }
 
     
-
-    
 }
 
 function registerUser(){
@@ -48,3 +50,17 @@ function registerUser(){
     wrapper.classList.add('active-popup');
 }
 
+const registerButton = document.getElementById('registerButton');
+const loginButton = document.getElementById('loginButton');
+
+registerButton.addEventListener('click', function() {
+    // Clear user information from localStorage when Register is clicked
+    localStorage.removeItem('userInfo');
+    // Additional actions for registration can be added here
+});
+
+loginButton.addEventListener('click', function() {
+    // Clear user information from localStorage when Login is clicked
+    localStorage.removeItem('userInfo');
+    // Additional actions for login can be added here
+});

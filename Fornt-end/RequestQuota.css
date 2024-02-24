@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Muli', sans-serif;
+}
+
+/* Ensuring double line spacing for text */
+#savedInfoSection, #displayInfo p {
+    line-height: 3; /* Double line spacing for readability */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('20240211_233718.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    padding-top: 100px; 
+    color: #fff;
+}
+
+/*menu bar at the top*/
+header {
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 200px;
+    background: greenyellow;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+}
+
+.logo {
+    
+    font-size: 3em;
+    color: #345;
+    user-select: none;
+    
+}
+
+.navigation a {
+    position: relative;
+    font-size: 1.1em;
+    color: #000;
+    text-decoration: dotted;
+    font-weight: 1000;
+    margin-left: 40px;
+}
+
+.navigation a::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    border-radius: 6px;
+ 
+    transform:scaleX(0);
+    transition: transform .5s;
+}
+
+.navigation a:hover::after {
+
+    transform:scaleX(1);
+    
+}
+
+.requestWrapper {
+    width: 80%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 40px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn {
+    background: greenyellow;
+    color: #234;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: greenyellow;
+}

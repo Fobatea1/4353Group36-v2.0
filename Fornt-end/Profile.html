@@ -9,10 +9,11 @@
         <h2 class="logo">hey</h2>
         <nav class="navigation">
             <a href="index.html">Home</a>
-            <a href="Success.html">Success</a>
+            <a href="Profile.html">Profile</a>
             <a href="#">Services</a>
             <a href="#">Quaso</a>
-            <button class="btnLogin-popup">Login</button>
+            <h2 class="userGreeting">Welcome, <span id="userGreeting">User</span>!</h2>
+
         </nav>
     </header>
     
@@ -46,6 +47,8 @@
                     <p>State: ${userInfo.state}</p>
                     <p>Zipcode: ${userInfo.zipcode}</p>
                 `;
+                // Update the user greeting to include the first name
+                document.getElementById('userGreeting').innerText = userInfo.firstName || 'User';
             } else {
                 document.getElementById('displayInfo').innerHTML = "<p>No information saved.</p>";
             }
@@ -55,7 +58,7 @@
             window.location.href = 'Success.html'; // Redirect to Success.html for editing
         }
 
-        displayUserInfo(); // Call this function when the page loads to display the user info
+        displayUserInfo(); // Call this function when the page loads to display the user info and update the greeting
     </script>
 </body>
 </html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Fuel Quota</title>
+    <link rel="stylesheet" href="RequestQuota.css"> <!-- Ensure this link is correct -->
+</head>
+<body>
+    <header>
+        <h2 class="logo">hey</h2>
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="Profile.html">Profile</a>
+            <a href="#">Services</a>
+            <a href="#">Quaso</a>
+        </nav>
+    </header>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="requestWrapper">
+        <h2>Request Fuel Quota</h2>
+        <form id="fuelQuotaForm">
+            <label for="gallonsRequested">How many Gallons do you need:</label>
+            <input type="number" id="gallonsRequested" name="gallonsRequested" required><br><br>
+
+            <label for="deliveryAddress">Delivery Address:</label>
+            <input type="text" id="deliveryAddress" name="deliveryAddress" readonly><br><br>
+
+            <button type="button" id="changeAddressBtn">Request address</button><br><br>
+
+            <div id="newAddressContainer" style="display:none;">
+                <label for="newAddress">Input new address:</label>
+                <input type="text" id="newAddress" name="newAddress"><br>
+                <button type="button" id="confirmAddressBtn">Confirm New Address</button><br><br>
+            </div>
+
+            <label for="deliveryDate">Request Delivery Date:</label>
+            <input type="date" id="deliveryDate" name="deliveryDate" required><br><br>
+
+            <button type="submit" id="completeInfoBtn">Complete Info</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('changeAddressBtn').addEventListener('click', function() {
+            document.getElementById('newAddressContainer').style.display = 'block';
+        });
+
+        document.getElementById('confirmAddressBtn').addEventListener('click', function() {
+            var newAddress = document.getElementById('newAddress').value;
+            if(newAddress) {
+                document.getElementById('deliveryAddress').value = newAddress;
+                document.getElementById('newAddressContainer').style.display = 'none';
+            } else {
+                alert('Please enter a new address.');
+            }
+        });
+
+        document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const gallonsRequested = document.getElementById('gallonsRequested').value;
+            const deliveryAddress = document.getElementById('deliveryAddress').value || document.getElementById('newAddress').value;
+            const deliveryDate = document.getElementById('deliveryDate').value;
+
+            const fuelRequestData = {
+                gallonsRequested,
+                deliveryAddress,
+                deliveryDate
+            };
+
+            localStorage.setItem('fuelRequestData', JSON.stringify(fuelRequestData));
+            window.location.href = 'Profile.html';
+        });
+
+        window.onload = function() {
+            var storedInfo = localStorage.getItem('userInfo');
+            if(storedInfo) {
+                var userInfo = JSON.parse(storedInfo);
+                document.getElementById('deliveryAddress').value = userInfo.address1 || '';
+            }
+        };
+    </script>
+</body>
+</html>
