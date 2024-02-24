@@ -52,39 +52,26 @@
                     <label>State</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" maxlength="9" required>
+                    <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" minLength="5" maxLength="9" required>
                     <label>Zipcode</label>
                 </div>
                 <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>
         </div>
     </div>
-    
-    <script>
-        document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
-
-        function saveUserInfo() {
-            var userInfo = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                address1: document.getElementById('address1').value,
-                address2: document.getElementById('address2').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zipcode: document.getElementById('zipcode').value
-            };
-            localStorage.setItem('userInfo', JSON.stringify(userInfo));
-            alert('User Information Saved Successfully!');
-            window.location.href = 'Profile.html';
-        }
-
-        
-    </script>
 
 <script>
     document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
 
     function saveUserInfo() {
+        var zipcode = document.getElementById('zipcode').value;
+        
+        // Check if the zipcode length is less than 5 characters
+        if (zipcode.length < 5) {
+            alert('Zipcode must be at least 5 characters long.');
+            return; // Prevent the form from being submitted
+        }
+
         var userInfo = {
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
@@ -92,14 +79,14 @@
             address2: document.getElementById('address2').value,
             city: document.getElementById('city').value,
             state: document.getElementById('state').value,
-            zipcode: document.getElementById('zipcode').value
+            zipcode: zipcode
         };
+        
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
         alert('User Information Saved Successfully!');
         window.location.href = 'Profile.html';
     }
 
-    // Function to populate the form with existing user info
     function populateUserInfo() {
         var storedInfo = localStorage.getItem('userInfo');
         if(storedInfo) {
@@ -114,8 +101,7 @@
         }
     }
 
-    // Call populateUserInfo when the page loads to fill in the form
     window.onload = populateUserInfo;
 </script>
 </body>
-</html>
+<html>
