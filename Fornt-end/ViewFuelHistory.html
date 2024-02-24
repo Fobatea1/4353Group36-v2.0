@@ -9,12 +9,15 @@
         <h2 class="logo">hey</h2>
         <nav class="navigation">
             <a href="index.html">Home</a>
-            <a href="Success.html">Success</a>
+            <a href="Profile.html">Profile</a>
             <a href="#">Services</a>
             <a href="#">Quaso</a>
         </nav>
     </header>
-
+    <br>
+    <br>
+    <br>
+    <br>
     <!-- Content wrapped inside historyWrapper for styling -->
     <div class="historyWrapper">
         <h2>Fuel Request History</h2>
@@ -29,8 +32,11 @@
 
             if (fuelRequestData) {
                 const requestData = JSON.parse(fuelRequestData);
-                let displayText = `<p>Gallons Requested: ${requestData.gallonsRequested}</p>
+                let displayText = ` <br>
+                                    <p>Gallons Requested: ${requestData.gallonsRequested}</p>
+                                    <br>
                                     <p>Delivery Address: ${requestData.deliveryAddress}</p>
+                                    <br>
                                     <p>Delivery Date: ${requestData.deliveryDate}</p>`;
                 historyContainer.innerHTML = displayText;
             } else {

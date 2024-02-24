@@ -23,19 +23,9 @@ body {
 }
 
 /* Header including "hey" and "login" */
+/*menu bar at the top*/
 header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 30px 200px;
-    background: greenyellow; /* Header background */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000; /* High z-index to keep the header above other content */
-}
-header {
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -49,6 +39,7 @@ header {
 }
 
 .logo {
+    
     font-size: 3em;
     color: #345;
     user-select: none;
@@ -83,7 +74,6 @@ header {
     transform:scaleX(1);
     
 }
-
 /* Ensuring double line spacing for text */
 #savedInfoSection, #displayInfo p {
     line-height: 3; /* Double line spacing for readability */

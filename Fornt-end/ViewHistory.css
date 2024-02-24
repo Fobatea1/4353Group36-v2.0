@@ -25,7 +25,9 @@ body {
     color: #fff;
 }
 
+/*menu bar at the top*/
 header {
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -35,31 +37,45 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 1000;
+    z-index: 50;
 }
 
-.logo, .navigation a, .navigation .btnLogin-popup {
-    color: #fff;
+.logo {
+    
+    font-size: 3em;
+    color: #345;
+    user-select: none;
+    
 }
 
-.navigation a, .navigation .btnLogin-popup {
+.navigation a {
+    position: relative;
+    font-size: 1.1em;
+    color: #000;
+    text-decoration: dotted;
+    font-weight: 1000;
     margin-left: 40px;
-    transition: color 0.3s;
 }
 
-.navigation .btnLogin-popup {
-    padding: 10px 15px;
-    border: 2px solid #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    background: transparent;
-}
-
-.navigation .btnLogin-popup:hover {
+.navigation a::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
     background: #fff;
-    color: #162938;
+    border-radius: 6px;
+ 
+    transform:scaleX(0);
+    transition: transform .5s;
 }
 
+.navigation a:hover::after {
+
+    transform:scaleX(1);
+    
+}
 .historyWrapper {
     width: 80%;
     max-width: 600px;

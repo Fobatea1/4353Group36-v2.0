@@ -10,7 +10,7 @@
         <h2 class="logo">hey</h2>
         <nav class="navigation">
             <a href="index.html">Home</a>
-            <a href="Success.html">Success</a>
+            <a href="Profile.html">Profile</a>
             <a href="#">Services</a>
             <a href="#">Quaso</a>
         </nav>
@@ -28,11 +28,11 @@
             <h2>Please enter or update your details:</h2>
             <form>
                 <div class="input-box">
-                    <input type="text" id="firstName" maxlength="50" required>
+                    <input type="text" id="firstName" maxlength="50" value="<%= userInfo.firstName %>" required>
                     <label>First Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="lastName" maxlength="50" required>
+                    <input type="text" id="lastName" maxlength="50" value="<%= userInfo.lastName %>" required>
                     <label>Last Name</label>
                 </div>
                 <div class="input-box">
@@ -77,6 +77,8 @@
             alert('User Information Saved Successfully!');
             window.location.href = 'Profile.html';
         }
+
+        
     </script>
 
 <script>
