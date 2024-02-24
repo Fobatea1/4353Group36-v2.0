@@ -41,14 +41,17 @@
                 </div>
                 <div class="input-box">
                     <input type="text" id="address2" maxlength="100">
-                    <label>Address 2</label>
+                    <label> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Address 2 (Optional)</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="city" maxlength="100" required>
-                    <label>City</label>
+                    <label>City&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+                </div>
+
+                <div class="state">
+                    <label for="state">&nbspState</label>
                 </div>
                 <div class="input-box">
-                    <label for="state">State</label>
                     <select id="state" name="state" required>
                         <option value="">Select State</option>
                         <option value="AL">Alabama</option>
@@ -104,8 +107,8 @@
                     </select>
                 </div>                
                 <div class="input-box">
-                    <input type="text" id="zipcode" pattern="\d{5}(-\d{4})?" minLength="5" maxLength="9" required>
-                    <label>Zipcode</label>
+                    <input type="text" id="zipcode" minLength="5" maxLength="9" required>
+                    <label>Zipcode&nbsp&nbsp&nbsp&nbsp</label>
                 </div>
                 <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>

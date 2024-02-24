@@ -166,3 +166,7 @@ header {
     background-color: #fff; /* Background color on hover */
     color: greenyellow; /* Text color on hover */
 }
+
+.state {
+    color: white; 
+}
