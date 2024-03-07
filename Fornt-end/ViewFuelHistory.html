@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>View Fuel History</title>
-    <link rel="stylesheet" href="ViewHistory.css"> <!-- Ensure this link is correct -->
+    <link rel="stylesheet" href="ViewHistory.css">
 </head>
 <body>
     <header>
@@ -14,13 +15,10 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
-    <br>
-    <br>
-    <br>
-    <br>
-    <!-- Content wrapped inside historyWrapper for styling -->
+    <br><br><br><br>
     <div class="historyWrapper">
         <h2>Fuel Request History</h2>
+        <br>
         <div id="fuelHistoryContainer"></div>
         <button onclick="viewProfile()" class="btn">View Profile</button>
     </div>
@@ -28,16 +26,25 @@
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            const fuelRequestData = localStorage.getItem('fuelRequestData');
+            const fuelRequestData = JSON.parse(localStorage.getItem('fuelRequestData'));
 
             if (fuelRequestData) {
-                const requestData = JSON.parse(fuelRequestData);
-                let displayText = ` <br>
-                                    <p>Gallons Requested: ${requestData.gallonsRequested}</p>
-                                    <br>
-                                    <p>Delivery Address: ${requestData.deliveryAddress}</p>
-                                    <br>
-                                    <p>Delivery Date: ${requestData.deliveryDate}</p>`;
+                const { gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryDate } = fuelRequestData;
+
+                let displayText = `
+                    <div>
+                        <p>Gallons Requested: ${gallonsRequested}</p>
+                        <br>
+                        <p>Fuel Type: ${fuelType}</p>
+                        <br>
+                        <p>Total Amount Due: ${totalAmountDue}</p>
+                        <br>
+                        <p>Delivery Address: ${deliveryAddress}</p>
+                        <br>
+                        <p>Delivery Date: ${deliveryDate}</p>
+                    </div>
+                `;
+
                 historyContainer.innerHTML = displayText;
             } else {
                 historyContainer.innerHTML = '<p>No Previous History</p>';
