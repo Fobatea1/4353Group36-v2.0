@@ -88,6 +88,8 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: auto;
+    min-height: 20px;
 }
 
 .btn {
@@ -102,6 +104,6 @@ header {
 }
 
 .btn:hover {
-    background-color: #fff;
+    background-color: #000;
     color: greenyellow;
 }
