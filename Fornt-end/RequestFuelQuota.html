@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Request Fuel Quota</title>
-    <link rel="stylesheet" href="RequestQuota.css"> <!-- Ensure this link is correct -->
+    <link rel="stylesheet" href="RequestQuota.css">
+    <script src="HistoryManager.js" defer></script>
 </head>
 <body>
     <header>
@@ -14,10 +16,7 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
-    <br>
-    <br>
-    <br>
-    <br>
+    <br><br><br><br>
     <div class="requestWrapper">
         <h2>Request Fuel Quota</h2>
         <form id="fuelQuotaForm">
@@ -93,7 +92,7 @@
                 totalAmountDue
             };
 
-            localStorage.setItem('fuelRequestData', JSON.stringify(fuelRequestData));
+            HistoryManager.addEntry(fuelRequestData);
             window.location.href = 'Profile.html';
         });
 

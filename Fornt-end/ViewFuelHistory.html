@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>View Fuel History</title>
     <link rel="stylesheet" href="ViewHistory.css">
+    <script src="HistoryManager.js" defer></script>
 </head>
 <body>
     <header>
@@ -20,35 +21,40 @@
         <h2>Fuel Request History</h2>
         <br>
         <div id="fuelHistoryContainer"></div>
+        <button onclick="clearHistory()" class="btn">Clear History</button>
         <button onclick="viewProfile()" class="btn">View Profile</button>
     </div>
 
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            const fuelRequestData = JSON.parse(localStorage.getItem('fuelRequestData'));
+            const fuelRequestHistory = HistoryManager.getHistory();
 
-            if (fuelRequestData) {
-                const { gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryDate } = fuelRequestData;
-
-                let displayText = `
+            if (fuelRequestHistory && fuelRequestHistory.length > 0) {
+                let displayText = fuelRequestHistory.map(entry => `
                     <div>
-                        <p>Gallons Requested: ${gallonsRequested}</p>
+                        <p>Gallons Requested: ${entry.gallonsRequested}</p>
                         <br>
-                        <p>Fuel Type: ${fuelType}</p>
+                        <p>Fuel Type: ${entry.fuelType}</p>
                         <br>
-                        <p>Total Amount Due: ${totalAmountDue}</p>
+                        <p>Total Amount Due: ${entry.totalAmountDue}</p>
                         <br>
-                        <p>Delivery Address: ${deliveryAddress}</p>
+                        <p>Delivery Address: ${entry.deliveryAddress}</p>
                         <br>
-                        <p>Delivery Date: ${deliveryDate}</p>
+                        <p>Delivery Date: ${entry.deliveryDate}</p>
+                        <br>
+                        <br>
                     </div>
-                `;
-
+                `).join('<br>');
                 historyContainer.innerHTML = displayText;
             } else {
                 historyContainer.innerHTML = '<p>No Previous History</p>';
             }
+        }
+
+        function clearHistory() {
+            HistoryManager.clearHistory();
+            displayFuelHistory();
         }
 
         function viewProfile() {
