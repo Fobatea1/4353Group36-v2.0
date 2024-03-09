@@ -163,7 +163,7 @@ header {
 }
 
 .btn:hover {
-    background-color: #fff; /* Background color on hover */
+    background-color: #000; /* Background color on hover */
     color: greenyellow; /* Text color on hover */
 }
 
