@@ -21,6 +21,7 @@
         <h2>Fuel Request History</h2>
         <br>
         <div id="fuelHistoryContainer"></div>
+<!-- table -->
         <table border = "20px">
         <thead>
             <th>Request #</th>
@@ -37,6 +38,23 @@
                 <th>3/14</th>
                 <th>some math shit</th>
             </tr>
+            <!-- <div id="insertNewRow"></div> 
+                func insertNewRow(){
+                    const historyContainer = document.getElementById('fuelHistoryContainer');
+                    const fuelRequestHistory = HistoryManager.getHistory();
+
+                    if (fuelRequestHistory && fuelRequestHistory.length > 0) {
+                        let displayText = fuelRequestHistory.map(entry => `
+                            <tr>
+                                <td>Gallons Requested: ${entry.gallonsRequested}</td>
+                                <td>Fuel Type: ${entry.fuelType}</td>
+                                <td>Total Amount Due: ${entry.totalAmountDue}</td>
+                                <td>Delivery Address: ${entry.deliveryAddress}</td>
+                                <td>Delivery Date: ${entry.deliveryDate}</td>
+                            </tr>
+                        `).join('<br>');
+                        historyContainer.innerHTML = displayText;
+                } -->
         </tbody>
         </table>
         <button onclick="clearHistory()" class="btn">Clear History</button>
