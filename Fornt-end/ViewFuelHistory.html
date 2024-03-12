@@ -30,7 +30,7 @@
         </table>
         <button onclick="clearHistory()" class="btn">Clear History</button>
         <button onclick="viewProfile()" class="btn">View Profile</button>
-        
+        <button onclick="requestFuel()" class="btn">Request Fuel Quota</button>
     </div>
 
     <script>
@@ -90,6 +90,10 @@
 
         function viewProfile() {
             window.location.href = 'Profile.html';
+        }
+
+        function requestFuel() {
+            window.location.href = 'RequestFuelQuota.html';
         }
 
         window.onload = displayFuelHistory;

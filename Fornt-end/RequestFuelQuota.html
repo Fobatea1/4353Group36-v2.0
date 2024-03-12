@@ -19,6 +19,8 @@
     <br><br><br><br>
     <div class="requestWrapper">
         <h2>Request Fuel Quota</h2>
+        <br>
+        <br>
         <form id="fuelQuotaForm">
             <label for="gallonsRequested">How many Gallons do you need:</label>
             <input type="number" id="gallonsRequested" name="gallonsRequested" required><br><br>
@@ -29,8 +31,6 @@
                 <option value="1.34">Diesel - $1.34/gallon</option>
                 <option value="3.89">Premium - $3.89/gallon</option>
             </select><br><br>
-
-            <button type="button" id="applyPriceBtn">Apply Price</button><br><br>
 
             <label>Total Amount Due: </label>
             <span id="totalAmountDue">$0.00</span><br><br>
@@ -51,6 +51,10 @@
 
             <button type="submit" id="completeInfoBtn">Complete Info</button>
         </form>
+        <div id="postSubmissionOptions" style="display:none;">
+            <button onclick="window.location.href='Profile.html'" class="btn">View Profile</button>
+            <button onclick="window.location.href='ViewFuelHistory.html'" class="btn">View Fuel History</button>
+        </div>
     </div>
 
     <script>
@@ -68,12 +72,15 @@
             }
         });
 
-        document.getElementById('applyPriceBtn').addEventListener('click', function() {
+        function calculateTotalAmount() {
             const gallons = document.getElementById('gallonsRequested').value;
             const pricePerGallon = document.getElementById('fuelType').value;
             const totalAmount = gallons * pricePerGallon;
             document.getElementById('totalAmountDue').innerText = `$${totalAmount.toFixed(2)}`;
-        });
+        }
+
+        document.getElementById('gallonsRequested').addEventListener('input', calculateTotalAmount);
+        document.getElementById('fuelType').addEventListener('change', calculateTotalAmount);
 
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -93,7 +100,9 @@
             };
 
             HistoryManager.addEntry(fuelRequestData);
-            window.location.href = 'Profile.html';
+
+            // Show the options after form submission
+            document.getElementById('postSubmissionOptions').style.display = 'block';
         });
 
         window.onload = function() {
@@ -101,6 +110,7 @@
             if(storedInfo) {
                 var userInfo = JSON.parse(storedInfo);
                 document.getElementById('deliveryAddress').value = userInfo.address1 || '';
+                calculateTotalAmount(); // Calculate amount on load if applicable
             }
         };
     </script>
