@@ -5,6 +5,7 @@
     <title>View Fuel History</title>
     <link rel="stylesheet" href="ViewHistory.css">
     <script src="HistoryManager.js" defer></script>
+
 </head>
 <body>
     <header>
@@ -20,41 +21,11 @@
     <div class="historyWrapper">
         <h2>Fuel Request History</h2>
         <br>
-        <div id="fuelHistoryContainer"></div>
-<!-- table -->
-        <table border = "20px">
-        <thead>
-            <th>Request #</th>
-            <th>No. Gallons Requested</th>
-            <th>Fuel Type</th>
-            <th>Delivery Date</th>
-            <th>Total Amount</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>R 1</td>
-                <th>7</th>
-                <th>Diesel (1.34 per gal) </th>
-                <th>3/14</th>
-                <th>some math shit</th>
-            </tr>
-            <!-- <div id="insertNewRow"></div> 
-                func insertNewRow(){
-                    const historyContainer = document.getElementById('fuelHistoryContainer');
-                    const fuelRequestHistory = HistoryManager.getHistory();
+        
 
-                    if (fuelRequestHistory && fuelRequestHistory.length > 0) {
-                        let displayText = fuelRequestHistory.map(entry => `
-                            <tr>
-                                <td>Gallons Requested: ${entry.gallonsRequested}</td>
-                                <td>Fuel Type: ${entry.fuelType}</td>
-                                <td>Total Amount Due: ${entry.totalAmountDue}</td>
-                                <td>Delivery Address: ${entry.deliveryAddress}</td>
-                                <td>Delivery Date: ${entry.deliveryDate}</td>
-                            </tr>
-                        `).join('<br>');
-                        historyContainer.innerHTML = displayText;
-                } -->
+
+            <tr> <div id="fuelHistoryContainer"></div> </tr>
+
         </tbody>
         </table>
         <button onclick="clearHistory()" class="btn">Clear History</button>
@@ -63,35 +34,58 @@
     </div>
 
     <script>
-        function displayFuelHistory() {
-            const historyContainer = document.getElementById('fuelHistoryContainer');
-            const fuelRequestHistory = HistoryManager.getHistory();
+            function displayFuelHistory() {
+        const historyContainer = document.getElementById('fuelHistoryContainer');
+        const fuelRequestHistory = HistoryManager.getHistory();
 
-            if (fuelRequestHistory && fuelRequestHistory.length > 0) {
-                let displayText = fuelRequestHistory.map(entry => `
-                    <div>
-                        <p>Gallons Requested: ${entry.gallonsRequested}</p>
-                        <br>
-                        <p>Fuel Type: ${entry.fuelType}</p>
-                        <br>
-                        <p>Total Amount Due: ${entry.totalAmountDue}</p>
-                        <br>
-                        <p>Delivery Address: ${entry.deliveryAddress}</p>
-                        <br>
-                        <p>Delivery Date: ${entry.deliveryDate}</p>
-                        <br>
-                        <br>
-                    </div>
-                `).join('<br>');
-                historyContainer.innerHTML = displayText;
-            } else {
-                historyContainer.innerHTML = '<p>No Previous History</p>';
-            }
+        if (fuelRequestHistory && fuelRequestHistory.length > 0) {
+            const table = document.createElement('table');
+            table.setAttribute('border', '5');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            const headRow = document.createElement('tr');
+            ['\tRequest #\t', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
+                const th = document.createElement('th');
+                th.textContent = heading;
+                headRow.appendChild(th);
+            });
+
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+
+            fuelRequestHistory.forEach((entry, index) => {
+                const newRow = document.createElement('tr');
+
+                const requestNumberCell = document.createElement('td');
+                requestNumberCell.textContent = index + 1;
+                newRow.appendChild(requestNumberCell);
+
+                ['gallonsRequested', 'fuelType', 'totalAmountDue', 'deliveryAddress', 'deliveryDate'].forEach(key => {
+                    const td = document.createElement('td');
+                    td.textContent = entry[key];
+                    newRow.appendChild(td);
+                });
+
+                tbody.appendChild(newRow);
+            });
+
+            table.appendChild(tbody);
+            historyContainer.appendChild(table);
+        } else {
+            const noHistoryRow = document.createElement('tr');
+            const noHistoryCell = document.createElement('td');
+            noHistoryCell.colSpan = 6;
+            noHistoryCell.textContent = 'No Previous History';
+            noHistoryRow.appendChild(noHistoryCell);
+            historyContainer.appendChild(noHistoryRow);
         }
+    }
 
         function clearHistory() {
             HistoryManager.clearHistory();
-            displayFuelHistory();
+            const historyContainer = document.getElementById('fuelHistoryContainer');
+            historyContainer.innerHTML = 'No Previous History';
         }
 
         function viewProfile() {
