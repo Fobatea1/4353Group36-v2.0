@@ -85,6 +85,8 @@ header {
     border: 2px solid rgba(255, 255, 255, .5);
     border-radius: 20px; /* Rounded corners for aesthetic */
     background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+    height: auto;
+    min-height: 20px;
 }
 
 .btn {
@@ -99,7 +101,7 @@ header {
 }
 
 .btn:hover {
-    background-color: #fff; /* Background color on hover */
+    background-color: #000; /* Background color on hover */
     color: greenyellow; /* Text color on hover */
 }
 
@@ -123,6 +125,7 @@ body {
     background-position: center;
     padding-top: 100px;
     color: #fff;
+    
 }
 
 header {

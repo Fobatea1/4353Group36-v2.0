@@ -84,7 +84,7 @@ header {
     margin-top: 150px;
     position:relative;
     width: 600px;
-    height: 900px;
+
     background: transparent;
     border: 2px solid rgba(255, 255,255,.5);
     border-radius: 20px;
@@ -94,6 +94,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: auto;
+    min-height: 20px;
 
 }
 
@@ -163,7 +165,7 @@ header {
 }
 
 .btn:hover {
-    background-color: #fff; /* Background color on hover */
+    background-color: #000; /* Background color on hover */
     color: greenyellow; /* Text color on hover */
 }
 
