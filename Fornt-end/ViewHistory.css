@@ -40,8 +40,9 @@ header {
     z-index: 50;
 }
 
-td {
+td, th {
     text-align: center;
+    font-size: 1em;
 }
 
 .logo {
@@ -95,6 +96,14 @@ td {
     height: auto;
     min-height: 20px;
 }
+
+.historyWrapper table {
+    font-size: 30px; 
+}
+
+.historyWrapper table thead {
+    background-color: green; /* Change this to the color you prefer */
+  }
 
 .btn {
     background: greenyellow;

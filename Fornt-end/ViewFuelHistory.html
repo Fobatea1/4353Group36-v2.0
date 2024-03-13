@@ -21,8 +21,6 @@
     <div class="historyWrapper">
         <h2>Fuel Request History</h2>
         <br>
-        
-
 
             <tr> <div id="fuelHistoryContainer"></div> </tr>
 
@@ -36,7 +34,7 @@
         <button onclick="requestFuel()" class="btn">Request Fuel Quota</button>
     </div>
     <script>
-            function displayFuelHistory() {
+        function displayFuelHistory() {
         const historyContainer = document.getElementById('fuelHistoryContainer');
         const fuelRequestHistory = HistoryManager.getHistory();
 
@@ -47,7 +45,7 @@
             const tbody = document.createElement('tbody');
 
             const headRow = document.createElement('tr');
-            ['\tRequest #\t', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
+            ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
                 const th = document.createElement('th');
                 th.textContent = heading;
                 headRow.appendChild(th);
