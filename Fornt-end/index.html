@@ -17,6 +17,7 @@
             <a href="#">Quaso</a>
             <button class="btnLogin-popup">Login</button>
             <button class="btnRegister-popup">Register</button>
+            <button id="logoutButton" class="btn" style="display:none;">Logout</button>
     </nav>
     </header>
 <!--login box-->>
@@ -62,7 +63,7 @@
                     <label>Password</label>
                 </div>
                 <div class="remember-forgot">
-                    <label><input type="checkbox" required>I agree to the terms & conditions</label>
+                    <label><input id ="termsCheckbox" type="checkbox" required>I agree to the terms & conditions</label>
                 </div>
                 <button type="submit" onclick="registerUser()" id = "registerButton" class="btn">Register</button>
                 <div class="login-register">
