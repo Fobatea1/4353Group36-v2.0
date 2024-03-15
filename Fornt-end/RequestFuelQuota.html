@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Request Fuel Quota</title>
-    <link rel="stylesheet" href="RequestQuota.css"> <!-- Ensure this link is correct -->
+    <link rel="stylesheet" href="RequestQuota.css">
+    <script src="HistoryManager.js" defer></script>
 </head>
 <body>
     <header>
@@ -14,15 +16,24 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
-    <br>
-    <br>
-    <br>
-    <br>
+    <br><br><br><br>
     <div class="requestWrapper">
         <h2>Request Fuel Quota</h2>
+        <br>
+        <br>
         <form id="fuelQuotaForm">
             <label for="gallonsRequested">How many Gallons do you need:</label>
             <input type="number" id="gallonsRequested" name="gallonsRequested" required><br><br>
+
+            <label for="fuelType">Fuel Type:</label>
+            <select id="fuelType" name="fuelType" required>
+                <option value="0.56">Regular - $0.56/gallon</option>
+                <option value="1.34">Diesel - $1.34/gallon</option>
+                <option value="3.89">Premium - $3.89/gallon</option>
+            </select><br><br>
+
+            <label>Total Amount Due: </label>
+            <span id="totalAmountDue">$0.00</span><br><br>
 
             <label for="deliveryAddress">Delivery Address:</label>
             <input type="text" id="deliveryAddress" name="deliveryAddress" readonly><br><br>
@@ -40,6 +51,10 @@
 
             <button type="submit" id="completeInfoBtn">Complete Info</button>
         </form>
+        <div id="postSubmissionOptions" style="display:none;">
+            <button onclick="window.location.href='Profile.html'" class="btn">View Profile</button>
+            <button onclick="window.location.href='ViewFuelHistory.html'" class="btn">View Fuel History</button>
+        </div>
     </div>
 
     <script>
@@ -57,21 +72,37 @@
             }
         });
 
+        function calculateTotalAmount() {
+            const gallons = document.getElementById('gallonsRequested').value;
+            const pricePerGallon = document.getElementById('fuelType').value;
+            const totalAmount = gallons * pricePerGallon;
+            document.getElementById('totalAmountDue').innerText = `$${totalAmount.toFixed(2)}`;
+        }
+
+        document.getElementById('gallonsRequested').addEventListener('input', calculateTotalAmount);
+        document.getElementById('fuelType').addEventListener('change', calculateTotalAmount);
+
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
             const gallonsRequested = document.getElementById('gallonsRequested').value;
             const deliveryAddress = document.getElementById('deliveryAddress').value || document.getElementById('newAddress').value;
             const deliveryDate = document.getElementById('deliveryDate').value;
+            const fuelType = document.getElementById('fuelType').selectedOptions[0].text;
+            const totalAmountDue = document.getElementById('totalAmountDue').innerText;
 
             const fuelRequestData = {
                 gallonsRequested,
                 deliveryAddress,
-                deliveryDate
+                deliveryDate,
+                fuelType,
+                totalAmountDue
             };
 
-            localStorage.setItem('fuelRequestData', JSON.stringify(fuelRequestData));
-            window.location.href = 'Profile.html';
+            HistoryManager.addEntry(fuelRequestData);
+
+            // Show the options after form submission
+            document.getElementById('postSubmissionOptions').style.display = 'block';
         });
 
         window.onload = function() {
@@ -79,6 +110,7 @@
             if(storedInfo) {
                 var userInfo = JSON.parse(storedInfo);
                 document.getElementById('deliveryAddress').value = userInfo.address1 || '';
+                calculateTotalAmount(); // Calculate amount on load if applicable
             }
         };
     </script>
