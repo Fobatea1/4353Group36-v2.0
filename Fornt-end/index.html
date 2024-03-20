@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content = "IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Front-end</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,38 +15,79 @@
             <a href="Profile.html">Profile</a>
             <a href="#">Services</a>
             <a href="#">Quaso</a>
-            <button id="btnLogin">Login</button>
-            <button id="btnRegister">Register</button>
-        </nav>
+            <button class="btnLogin-popup">Login</button>
+            <button class="btnRegister-popup">Register</button>
+            <button id="logoutButton" class="btn" style="display:none;">Logout</button>
+    </nav>
     </header>
-    
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+<!--login box-->>
+    <div class="wrapper">
+        <span class="icon-close">
+            <ion-icon name="close-outline"></ion-icon>
+        </span>
+        <div class="form-box login">
             <h2>Login</h2>
-            <input type="text" id="loginUsername" placeholder="Username"><br>
-            <input type="password" id="loginPassword" placeholder="Password"><br>
-            <button onclick="loginUser()">Login</button>
+            <form id="loginForm">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person-circle-outline"></ion-icon></span>
+                    <input type="text" id="loginUsername" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" id="loginPassword" required>
+                    <label>Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label><input type="checkbox">   Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button id="loginButton" type="submit" class="btn" onclick="loginUser()">Login</button>
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                </div>
+            </form>
         </div>
-    </div>
-    
-    <!-- Register Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2>Register</h2>
-            <input type="text" id="registerUsername" placeholder="Username"><br>
-            <input type="password" id="registerPassword" placeholder="Password"><br>
-            <input type="radio" id="admin" name="userType" value="Admin">
-            <label for="admin">Admin</label>
-            <input type="radio" id="customer" name="userType" value="Customer" checked>
-            <label for="customer">Customer</label><br>
-            <button onclick="registerUser()">Register</button>
+<!--register box-->>
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form >
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person-circle-outline"></ion-icon></span>
+                    <input type="text" id = "registerUsername" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" id = "registerPassword" required>
+                    <label>Password</label>
+                </div>
 
+                <div class = "adminCustomer">
+                    <input type="radio" id="admin" name="userType" value="Admin">
+                    <label for="admin">Admin</label>
+                    <input type="radio" id="customer" name="userType" value="Customer" checked>
+                    <label for="customer">Customer</label>
+                </div>
+                <br>
+                <br>
+                <div class="remember-forgot">
+                    <label><input id ="termsCheckbox" type="checkbox" required>I agree to the terms & conditions</label>
+                </div>
+                <button type="submit" onclick="registerUser()" id = "registerButton" class="btn">Register</button>
+                <div class="login-register">
+                    <p> Already have an account? <a href="#" class="login-link">Login</a></p>
+                </div>
+            </form>
         </div>
+
     </div>
+
 
     <script src="script.js"></script>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
 </body>
 </html>

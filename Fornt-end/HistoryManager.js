@@ -1,34 +1,36 @@
-// HistoryManager.js
-
 class HistoryManager {
-    static getHistoryKey() {
-        const username = sessionStorage.getItem('username');
+    constructor(storage = window.localStorage, session = window.sessionStorage) {
+        this.storage = storage;
+        this.session = session;
+    }
+
+    getHistoryKey() {
+        // Get the username from sessionStorage to create a unique key per user
+        const username = this.session.getItem('username');
         return `fuelRequestHistory_${username}`;
     }
 
-    static getHistory() {
+    getHistory() {
+        // Retrieve history using the unique key
         const historyKey = this.getHistoryKey();
-        const history = localStorage.getItem(historyKey);
+        const history = this.storage.getItem(historyKey);
         return history ? JSON.parse(history) : [];
     }
 
-    static addEntry(entry) {
+    addEntry(entry) {
+        // Add an entry to the user's history
         const historyKey = this.getHistoryKey();
         const history = this.getHistory();
         history.push(entry);
-        localStorage.setItem(historyKey, JSON.stringify(history));
+        this.storage.setItem(historyKey, JSON.stringify(history));
     }
 
-    static clearHistory() {
+    clearHistory() {
+        // Clear the user's history
         const historyKey = this.getHistoryKey();
-        localStorage.removeItem(historyKey);
+        this.storage.removeItem(historyKey);
     }
 }
 
-// CommonJS module export for Jest testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = HistoryManager;
-} else {
-    // Attach to window for browser environments
-    window.HistoryManager = HistoryManager;
-}
+// Exporting HistoryManager class for use in other modules or test files
+module.exports = HistoryManager;
