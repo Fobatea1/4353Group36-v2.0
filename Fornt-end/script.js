@@ -17,22 +17,31 @@ btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active')
 
 //check if button works
 
+document.cookie = "wrapper-visible=true";
+
+if (document.cookie.indexOf('wrapper-visible=true') !== -1) {
+    wrapper.classList.add('active-popup');
+  }
+
+btnRegisterPopup.addEventListener('click', ()=> {
+    wrapper.classList.add('active-popup');
+    // Set the "wrapper-visible" cookie to "true" when the wrapper element is shown
+    document.cookie = "wrapper-visible=true";
+  });
 
 function loginUser(){
 
-    const storedUsername = localStorage.getItem('username');
-    const storedPassword = localStorage.getItem('password');
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
+    const user = JSON.parse(localStorage.getItem(username));
 
-    if (username === storedUsername && password === storedPassword) {
-        window.location.href = 'Success.html?username=' + encodeURIComponent(username);
+    if (username === user.username && password === user.password) {
+        sessionStorage.setItem('username', username);
+        sessionStorage.setItem('userType', user.userType);
+        window.location.href = 'Success.html?username=' + encodeURIComponent(user.username);
         alert('Login Successful!');
         
-        // Redirect or display login success message here
-
-        
-
+        // Redirect or display login success message here 
     } else {
         alert('Invalid Username or Password.');
     }
@@ -40,27 +49,34 @@ function loginUser(){
     
 }
 
-function registerUser(){
+function registerUser() {
+  const username = document.getElementById('registerUsername').value;
+  const password = document.getElementById('registerPassword').value;
+  const userType = document.querySelector('input[name="userType"]:checked').value;
 
-    const username = document.getElementById('registerUsername').value;
-    const password = document.getElementById('registerPassword').value;
-    localStorage.setItem('username', username);
-    localStorage.setItem('password', password);
-    alert('Registration Successful. You can now log in.');
-    wrapper.classList.add('active-popup');
+  const user = {
+      username,
+      password,
+      userType
+  };
+
+  localStorage.setItem(username, JSON.stringify(user));
+  alert('Registration Successful. You can now log in.');
+  wrapper.classList.remove('active-popup');
 }
 
 const registerButton = document.getElementById('registerButton');
 const loginButton = document.getElementById('loginButton');
 
-registerButton.addEventListener('click', function() {
-    // Clear user information from localStorage when Register is clicked
-    localStorage.removeItem('userInfo');
-    // Additional actions for registration can be added here
-});
+registerButton.addEventListener('click', registerUser);
+loginButton.addEventListener('click', loginUser);
 
-loginButton.addEventListener('click', function() {
-    // Clear user information from localStorage when Login is clicked
-    localStorage.removeItem('userInfo');
-    // Additional actions for login can be added here
+document.addEventListener('DOMContentLoaded', () => {
+    const userType = sessionStorage.getItem('userType');
+    if (page === '/Profile.html' && userType === 'Admin') {
+        const adminButton = document.createElement('button');
+        adminButton.textContent = 'View Admin Info';
+        adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
+        document.body.appendChild(adminButton);
+    }
 });

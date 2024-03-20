@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Muli', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('20240211_233718.jpg') no-repeat center center / cover;
+    background-size: cover;
+    padding-top: 100px; /* Space for fixed header */
+    color: #fff; /* Ensuring all text is white for visibility */
+}
+
+header {
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 200px;
+    background: greenyellow;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+}
+
+.logo {
+    font-size: 3em;
+    color: #345;
+    user-select: none;
+}
+
+.navigation a {
+    font-size: 1.1em;
+    color: #000; /* Adjust if you want a different color for nav links */
+    text-decoration: none; /* Removes underline from links */
+    margin-left: 40px;
+}
+
+.navigation a:hover {
+    text-decoration: underline; /* Adds an underline on hover for visual feedback */
+}
+
+.wrapper {
+    margin-top: 80px; /* Adjust as necessary for your header's actual height */
+    width: auto; /* Adjust based on content size or set to a specific width */
+    padding: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Adds depth */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn {
+    background: greenyellow; /* Button background color */
+    color: #234; /* Button text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners for the button */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 1em; /* Text size inside the button */
+    cursor: pointer; /* Cursor changes to pointer to indicate clickable */
+    margin-top: 20px; /* Margin above the button for spacing */
+}
+
+.btn:hover {
+    background-color: #000; /* Background color on hover */
+    color: greenyellow; /* Text color on hover */
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 20px 50px; /* Adjusts padding for smaller screens */
+    }
+
+    .wrapper {
+        padding: 20px;
+        width: 90%; /* Makes wrapper responsive */
+    }
+}

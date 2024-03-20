@@ -1,17 +1,28 @@
-// HistoryManager.js
 class HistoryManager {
+    static getHistoryKey() {
+        // Get the username from sessionStorage to create a unique key per user
+        const username = sessionStorage.getItem('username');
+        return `fuelRequestHistory_${username}`;
+    }
+
     static getHistory() {
-        const history = localStorage.getItem('fuelRequestHistory');
+        // Retrieve history using the unique key
+        const historyKey = HistoryManager.getHistoryKey();
+        const history = localStorage.getItem(historyKey);
         return history ? JSON.parse(history) : [];
     }
 
     static addEntry(entry) {
+        // Add an entry to the user's history
+        const historyKey = HistoryManager.getHistoryKey();
         const history = HistoryManager.getHistory();
         history.push(entry);
-        localStorage.setItem('fuelRequestHistory', JSON.stringify(history));
+        localStorage.setItem(historyKey, JSON.stringify(history));
     }
 
     static clearHistory() {
-        localStorage.removeItem('fuelRequestHistory');
+        // Clear the user's history
+        const historyKey = HistoryManager.getHistoryKey();
+        localStorage.removeItem(historyKey);
     }
 }

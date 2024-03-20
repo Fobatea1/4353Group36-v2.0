@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>User Profile</title>
-    <link rel="stylesheet" href="ProfileStyle.css"> <!-- Ensure this link is correct -->
+    <link rel="stylesheet" href="ProfileStyle.css">
 </head>
 <body>
     <header>
@@ -13,52 +14,84 @@
             <a href="#">Services</a>
             <a href="#">Quaso</a>
             <h2 class="userGreeting">Welcome, <span id="userGreeting">User</span>!</h2>
-
         </nav>
     </header>
     
-    <!-- Spacing for header -->
-    <div style="height: 100px;"></div> <!-- Adjust the height as needed to accommodate the fixed header -->
+    <div style="height: 100px;"></div> <!-- Spacing for header -->
 
     <h2>User Profile</h2>
     <div id="savedInfoSection">
         <h3>Saved Information:</h3>
-        <div id="displayInfo"></div>
+        <div id="displayInfo">Loading...</div>
     </div>
 
     <!-- Button Container for alignment -->
-    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+    <div id="buttonContainer" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
         <button onclick="window.location.href='RequestFuelQuota.html'" class="btn">Request Fuel Quota</button>
         <button onclick="editUserInfo()" class="btn">Edit Info</button>
         <button onclick="window.location.href='ViewFuelHistory.html'" class="btn">View Fuel History</button>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            displayUserInfo();
+            displayAdminButtonIfNeeded();
+        });
+
         function displayUserInfo() {
-            var storedInfo = localStorage.getItem('userInfo');
-            if(storedInfo) {
-                var userInfo = JSON.parse(storedInfo);
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                document.getElementById('displayInfo').innerHTML = "<p>Please log in to view information.</p>";
+                return;
+            }
+
+            const userInfoKey = `userInfo_${username}`;
+            const storedInfo = localStorage.getItem(userInfoKey);
+            if (storedInfo) {
+                const userInfo = JSON.parse(storedInfo);
                 document.getElementById('displayInfo').innerHTML = `
-                    <p>First Name: ${userInfo.firstName}</p>
-                    <p>Last Name: ${userInfo.lastName}</p>
-                    <p>Address 1: ${userInfo.address1}</p>
-                    <p>Address 2: ${userInfo.address2}</p>
-                    <p>City: ${userInfo.city}</p>
-                    <p>State: ${userInfo.state}</p>
-                    <p>Zipcode: ${userInfo.zipcode}</p>
+                    <p>First Name: ${userInfo.firstName || ''}</p>
+                    <p>Last Name: ${userInfo.lastName || ''}</p>
+                    <p>Address 1: ${userInfo.address1 || ''}</p>
+                    <p>Address 2: ${userInfo.address2 || ''}</p>
+                    <p>City: ${userInfo.city || ''}</p>
+                    <p>State: ${userInfo.state || ''}</p>
+                    <p>Zipcode: ${userInfo.zipcode || ''}</p>
                 `;
-                // Update the user greeting to include the first name
-                document.getElementById('userGreeting').innerText = userInfo.firstName || 'User';
             } else {
                 document.getElementById('displayInfo').innerHTML = "<p>No information saved.</p>";
             }
         }
 
-        function editUserInfo() {
-            window.location.href = 'Success.html'; // Redirect to Success.html for editing
+        function displayAdminButtonIfNeeded() {
+            const userType = sessionStorage.getItem('userType');
+            if (userType === 'Admin') {
+                const buttonContainer = document.getElementById('buttonContainer');
+                const adminButton = document.createElement('button');
+                adminButton.innerText = 'View Admin Info';
+                adminButton.setAttribute('onclick', "window.location.href='AdminDashboard.html'");
+                adminButton.classList.add('btn');
+                buttonContainer.appendChild(adminButton);
+            }
         }
 
-        displayUserInfo(); // Call this function when the page loads to display the user info and update the greeting
+        function editUserInfo() {
+            window.location.href = 'Success.html';
+        }
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const username = sessionStorage.getItem('username');
+        if (username) {
+            const userInfoKey = `userInfo_${username}`;
+            const userInfo = JSON.parse(localStorage.getItem(userInfoKey));
+            if (userInfo && userInfo.firstName) {
+                document.getElementById('userGreeting').textContent = userInfo.firstName;
+            }
+        }
+    });
+    </script>
+
 </body>
 </html>

@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="SuccessStyle.css">
 </head>
 <body>
-    
     <header>
         <h2 class="logo">hey</h2>
         <nav class="navigation">
@@ -14,21 +13,15 @@
             <a href="#">Services</a>
             <a href="#">Quaso</a>
         </nav>
-        
     </header>
     
     <div class="informationWrapper">
-        
         <div class="form-box information">
-            
-    <br>
-    <br>
-    <br>
             <h2>Welcome, <span id="userGreeting"></span>!</h2>
             <h2>Please enter or update your details:</h2>
-            <form>
+            <form id="userForm">
                 <div class="input-box">
-                    <input type="text" id="firstName" maxlength="50"  required>
+                    <input type="text" id="firstName" maxlength="50" required>
                     <label>First Name</label>
                 </div>
                 <div class="input-box">
@@ -45,11 +38,7 @@
                 </div>
                 <div class="input-box">
                     <input type="text" id="city" maxlength="100" required>
-                    <label>City&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
-                </div>
-
-                <div class="state">
-                    <label for="state">&nbspState</label>
+                    <label>City</label>
                 </div>
                 <div class="input-box">
                     <select id="state" name="state" required>
@@ -105,58 +94,62 @@
                         <option value="WI">Wisconsin</option>
                         <option value="WY">Wyoming</option>
                     </select>
-                </div>                
+                </div>
                 <div class="input-box">
                     <input type="text" id="zipcode" minLength="5" maxLength="9" required>
-                    <label>Zipcode&nbsp&nbsp&nbsp&nbsp</label>
+                    <label>Zipcode</label>
                 </div>
                 <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>
         </div>
     </div>
 
-<script>
-    document.getElementById('userGreeting').innerText = localStorage.getItem('username') || 'User';
+    <script>
+        document.getElementById('userGreeting').innerText = sessionStorage.getItem('username') || 'User';
 
-    function saveUserInfo() {
-        var zipcode = document.getElementById('zipcode').value;
-        
-        // Check if the zipcode length is less than 5 characters
-        if (zipcode.length < 5) {
-            alert('Zipcode must be at least 5 characters long.');
-            return; // Prevent the form from being submitted
+        function saveUserInfo() {
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                alert("No username found. Please log in again.");
+                return;
+            }
+
+            const userInfo = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                address1: document.getElementById('address1').value,
+                address2: document.getElementById('address2').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipcode: document.getElementById('zipcode').value
+            };
+
+            localStorage.setItem(`userInfo_${username}`, JSON.stringify(userInfo));
+            alert('User Information Saved Successfully!');
+            window.location.href = 'Profile.html'; // Redirect to Profile page
         }
 
-        var userInfo = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            address1: document.getElementById('address1').value,
-            address2: document.getElementById('address2').value,
-            city: document.getElementById('city').value,
-            state: document.getElementById('state').value,
-            zipcode: zipcode
-        };
-        
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        alert('User Information Saved Successfully!');
-        window.location.href = 'Profile.html';
-    }
+        function populateUserInfo() {
+            const username = sessionStorage.getItem('username');
+            if (!username) {
+                console.log("No username found for loading user info.");
+                return;
+            }
 
-    function populateUserInfo() {
-        var storedInfo = localStorage.getItem('userInfo');
-        if(storedInfo) {
-            var userInfo = JSON.parse(storedInfo);
-            document.getElementById('firstName').value = userInfo.firstName || '';
-            document.getElementById('lastName').value = userInfo.lastName || '';
-            document.getElementById('address1').value = userInfo.address1 || '';
-            document.getElementById('address2').value = userInfo.address2 || '';
-            document.getElementById('city').value = userInfo.city || '';
-            document.getElementById('state').value = userInfo.state || '';
-            document.getElementById('zipcode').value = userInfo.zipcode || '';
+            const storedInfo = localStorage.getItem(`userInfo_${username}`);
+            if (storedInfo) {
+                const userInfo = JSON.parse(storedInfo);
+                document.getElementById('firstName').value = userInfo.firstName || '';
+                document.getElementById('lastName').value = userInfo.lastName || '';
+                document.getElementById('address1').value = userInfo.address1 || '';
+                document.getElementById('address2').value = userInfo.address2 || '';
+                document.getElementById('city').value = userInfo.city || '';
+                document.getElementById('state').value = userInfo.state || '';
+                document.getElementById('zipcode').value = userInfo.zipcode || '';
+            }
         }
-    }
 
-    window.onload = populateUserInfo;
-</script>
+        window.onload = populateUserInfo;
+    </script>
 </body>
-<html>
+</html>
