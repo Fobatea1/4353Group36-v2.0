@@ -31,19 +31,17 @@ btnRegisterPopup.addEventListener('click', ()=> {
 
 function loginUser(){
 
-    const storedUsername = localStorage.getItem('username');
-    const storedPassword = localStorage.getItem('password');
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
+    const user = JSON.parse(localStorage.getItem(username));
 
-    if (username === storedUsername && password === storedPassword) {
-        window.location.href = 'Success.html?username=' + encodeURIComponent(username);
+    if (username === user.username && password === user.password) {
+        sessionStorage.setItem('username', username);
+        sessionStorage.setItem('userType', user.userType);
+        window.location.href = 'Success.html?username=' + encodeURIComponent(user.username);
         alert('Login Successful!');
         
-        // Redirect or display login success message here
-        
-        
-
+        // Redirect or display login success message here 
     } else {
         alert('Invalid Username or Password.');
     }
@@ -51,68 +49,34 @@ function loginUser(){
     
 }
 
-function registerUser(){
-    
-    const username = document.getElementById('registerUsername').value;
-    const password = document.getElementById('registerPassword').value;
+function registerUser() {
+  const username = document.getElementById('registerUsername').value;
+  const password = document.getElementById('registerPassword').value;
+  const userType = document.querySelector('input[name="userType"]:checked').value;
 
-    if (username === '' || password === '') {
-        alert('Please enter a username and password.');
-        return;
-    }
+  const user = {
+      username,
+      password,
+      userType
+  };
 
-    if (!document.getElementById('termsCheckbox').checked) {
-        alert('Please agree to the terms & conditions.');
-        return;
-      }
-
-    localStorage.setItem('username', username);
-    localStorage.setItem('password', password);
-    alert('Registration Successful. You can now log in.');
-
-    const loginButtons = document.getElementsByClassName('btnLogin-popup');
-  if (loginButtons.length > 0) {
-    loginButtons[0].click();
-    if (document.cookie.indexOf('wrapper-visible=true') !== -1) {
-        wrapper.classList.add('active-popup');
-      }
-    
-  }
-    
+  localStorage.setItem(username, JSON.stringify(user));
+  alert('Registration Successful. You can now log in.');
+  wrapper.classList.remove('active-popup');
 }
 
 const registerButton = document.getElementById('registerButton');
 const loginButton = document.getElementById('loginButton');
 
-registerButton.addEventListener('click', function() {
-    // Clear user information from localStorage when Register is clicked
-    localStorage.removeItem('userInfo');
-    // Additional actions for registration can be added here
-});
+registerButton.addEventListener('click', registerUser);
+loginButton.addEventListener('click', loginUser);
 
-loginButton.addEventListener('click', function() {
-    // Clear user information from localStorage when Login is clicked
-    localStorage.removeItem('userInfo');
-    // Additional actions for login can be added here
-});
-
-const logoutButton = document.getElementById('logoutButton');
-
-// Check if the user is logged in
-if (localStorage.getItem('username')) {
-  // Show the logout button if the user is logged in
-  logoutButton.style.display = 'block';
-}
-
-// Add a click event listener to the logout button
-logoutButton.addEventListener('click', function() {
-  // Clear user information from localStorage when Logout is clicked
-  localStorage.removeItem('username');
-  localStorage.removeItem('password');
-
-  // Hide the logout button
-  logoutButton.style.display = 'none';
-
-  // Redirect the user to the login page
-  window.location.href = 'index.html';
+document.addEventListener('DOMContentLoaded', () => {
+    const userType = sessionStorage.getItem('userType');
+    if (page === '/Profile.html' && userType === 'Admin') {
+        const adminButton = document.createElement('button');
+        adminButton.textContent = 'View Admin Info';
+        adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
+        document.body.appendChild(adminButton);
+    }
 });
