@@ -1,50 +1,43 @@
 const { loginUser, registerUser } = require('./script');
 
-beforeAll(() => {
-  // Mocking alert and location.assign
-  global.alert = jest.fn();
-  delete global.location;
-  global.location = { assign: jest.fn() };
-
-  // Mocking localStorage and sessionStorage
-  const mockGetItem = jest.fn((key) => {
-    if (key === 'testUser') {
-      return JSON.stringify({ username: 'testUser', password: 'correctPassword', userType: 'Customer' });
-    }
-    return null;
-  });
-  
-  global.localStorage = {
-    getItem: mockGetItem,
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
-  };
-
-  global.sessionStorage = {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
-  };
-});
-
 beforeEach(() => {
   jest.clearAllMocks();
 
-  document.getElementById = jest.fn().mockImplementation((id) => {
+  global.alert = jest.fn();
+  global.location = { assign: jest.fn() };
+
+  const mockUser = JSON.stringify({
+    username: 'testUser',
+    password: 'correctPassword',
+    userType: 'Customer'
+  });
+
+  // Reset localStorage mock with a more targeted approach
+  global.localStorage = {
+    getItem: jest.fn((key) => key === 'testUser' ? mockUser : null),
+    setItem: jest.fn(),
+    // Ensure setItem is recognized as a Jest spy
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  };
+
+  document.getElementById = jest.fn((id) => {
     switch (id) {
       case 'loginUsername': return { value: 'testUser' };
       case 'loginPassword': return { value: 'correctPassword' };
       case 'registerUsername': return { value: 'newUser' };
-      case 'registerPassword': return { value: 'newPassword' };
+      case 'registerPassword': return { value: 'anyPassword' };
       default: return null;
     }
   });
 
-  document.querySelector = jest.fn().mockImplementation((selector) => {
+  document.querySelector = jest.fn((selector) => {
+    if (selector === 'input[name="userType"]:checked') {
+      return { value: 'Customer' };
+    }
+    // Mock .wrapper for registration test
     if (selector === '.wrapper') {
-      return { classList: { add: jest.fn(), remove: jest.fn() } };
+      return { classList: { remove: jest.fn() } };
     }
     return null;
   });
@@ -61,6 +54,6 @@ describe('User Interaction Tests', () => {
     const mockEvent = { preventDefault: jest.fn() };
     await registerUser(mockEvent);
     expect(alert).toHaveBeenCalledWith('Registration Successful. You can now log in.');
-    expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+    expect(global.localStorage.setItem).toHaveBeenCalledTimes(1);
   });
 });
