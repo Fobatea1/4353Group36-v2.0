@@ -80,3 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(adminButton);
     }
 });
+
+const logoutButton = document.getElementById('logoutButton');
+
+logoutButton.addEventListener('click', function() {
+    alert('You have been logged out.');
+});
