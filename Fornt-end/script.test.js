@@ -1,10 +1,11 @@
+// script.test.js
+
 const { loginUser, registerUser } = require('./script');
 
 beforeEach(() => {
-  // Clear all mocks before each test
   jest.clearAllMocks();
 
-  // Setup the mock for localStorage with Jest mock functions
+  // Setup the mock for localStorage
   Object.defineProperty(window, 'localStorage', {
     value: {
       getItem: jest.fn((key) => {
@@ -24,12 +25,14 @@ beforeEach(() => {
     configurable: true
   });
 
-  // Mock global alert and location.assign
+  // Mock the alert function
   global.alert = jest.fn();
-  global.location = { assign: jest.fn() };
 
-  // Mock document.getElementById to simulate form inputs
-  document.getElementById = jest.fn().mockImplementation((id) => {
+  // Setup the mock for redirectTo on window object
+  window.redirectTo = jest.fn();
+
+  // Mock document.getElementById for form inputs
+  document.getElementById = jest.fn((id) => {
     switch (id) {
       case 'loginUsername':
         return { value: 'testUser' };
@@ -44,34 +47,55 @@ beforeEach(() => {
     }
   });
 
-  // Mock document.querySelector for other DOM manipulations
+  // Mock document.querySelector for any other DOM queries
   document.querySelector = jest.fn().mockImplementation((selector) => {
     if (selector === '.wrapper') {
-      // Return an object with a mock classList for '.wrapper'
-      return { classList: { remove: jest.fn() } };
+      return { classList: { remove: jest.fn(), add: jest.fn() } };
     } else if (selector === 'input[name="userType"]:checked') {
-      // Mock the checked userType input
       return { value: 'Customer' };
     }
     return null;
   });
 });
 
+// Test suite for user interactions
 describe('User Interaction Tests', () => {
-  test('Successful login', async () => {
-    await loginUser();
-    // Verify alert was called with "Login Successful!"
+  test('Successful login', () => {
+    window.loginUser();
+
     expect(alert).toHaveBeenCalledWith('Login Successful!');
-    // Verify location.assign was called with a URL containing 'Success.html'
-    expect(location.assign).toHaveBeenCalledWith(expect.stringContaining('Success.html'));
+    expect(window.redirectTo).toHaveBeenCalledWith(expect.stringContaining('Success.html'));
   });
 
-  test('Successful registration', async () => {
-    const mockEvent = { preventDefault: jest.fn() };
-    await registerUser(mockEvent);
-    // Verify alert was called with "Registration Successful. You can now log in."
-    expect(alert).toHaveBeenCalledWith('Registration Successful. You can now log in.');
-    // Verify localStorage.setItem was called once
-    expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
+  test('Unsuccessful login', () => {
+    // Setup to simulate wrong credentials
+    document.getElementById.mockImplementation((id) => {
+      if (id === 'loginUsername') return { value: 'wrongUser' };
+      if (id === 'loginPassword') return { value: 'wrongPassword' };
+      return null;
+    });
+
+    window.loginUser();
+
+    expect(alert).toHaveBeenCalledWith('Invalid Username or Password.');
+    // Check redirectTo was not called
+    expect(window.redirectTo).not.toHaveBeenCalled();
   });
+
+  test('Successful registration', () => {
+    const mockEvent = { preventDefault: jest.fn() };
+    window.registerUser(mockEvent);
+
+    expect(alert).toHaveBeenCalledWith('Registration Successful. You can now log in.');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith(
+      'newUser',
+      JSON.stringify({
+        username: 'newUser',
+        password: 'newPassword',
+        userType: 'Customer'
+      })
+    );
+  });
+
+  // Additional tests for UI interactions would go here
 });

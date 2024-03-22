@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerLink = document.querySelector('.register-link');
     const btnLoginPopup = document.querySelector('.btnLogin-popup');
     const btnRegisterPopup = document.querySelector('.btnRegister-popup');
-    const btnCloseLogin = document.querySelector('.icon-close'); // Assuming this is your close button selector
+    const btnCloseLogin = document.querySelector('.icon-close');
 
-    // Toggle visibility for login and registration forms
     registerLink.addEventListener('click', () => wrapper.classList.add('active'));
     loginLink.addEventListener('click', () => wrapper.classList.remove('active'));
     btnLoginPopup.addEventListener('click', () => {
@@ -21,12 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
         wrapper.classList.add('active');
     });
 
-    // Event listeners for buttons, using global document in case elements are dynamically added or not present at script execution time
-    document.getElementById('registerButton')?.addEventListener('click', registerUser);
-    document.getElementById('loginButton')?.addEventListener('click', loginUser);
+    document.getElementById('registerButton')?.addEventListener('click', window.registerUser);
+    document.getElementById('loginButton')?.addEventListener('click', window.loginUser);
 });
 
-function loginUser() {
+window.loginUser = function() {
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
     const user = JSON.parse(localStorage.getItem(username));
@@ -35,13 +33,13 @@ function loginUser() {
         sessionStorage.setItem('username', username);
         sessionStorage.setItem('userType', user.userType);
         alert('Login Successful!');
-        window.location.href = 'Success.html?username=' + encodeURIComponent(user.username);
+        window.redirectTo('Success.html?username=' + encodeURIComponent(username));
     } else {
         alert('Invalid Username or Password.');
     }
-}
+};
 
-function registerUser(event) {
+window.registerUser = function(event) {
     event.preventDefault();
     const username = document.getElementById('registerUsername').value;
     const password = document.getElementById('registerPassword').value;
@@ -52,9 +50,13 @@ function registerUser(event) {
     alert('Registration Successful. You can now log in.');
     const wrapper = document.querySelector('.wrapper');
     wrapper.classList.remove('active-popup');
-}
+};
 
-// Exporting functions for Jest testing. This conditional check ensures it only tries to export when in a module context.
+window.redirectTo = function(url) {
+    window.location.href = url;
+};
+
+// Exporting functions for Jest testing, only if module.exports is available
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { loginUser, registerUser };
+    module.exports = { loginUser: window.loginUser, registerUser: window.registerUser, redirectTo: window.redirectTo };
 }
