@@ -1,6 +1,6 @@
 // script.test.js
 
-const { loginUser, registerUser } = require('./script');
+const { loginUser, registerUser, redirectTo } = require('./script');
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -28,7 +28,8 @@ beforeEach(() => {
   // Mock the alert function
   global.alert = jest.fn();
 
-  // Setup the mock for redirectTo on window object
+  // Setup the mock for redirectTo on the window object
+  // Note: This mock will be replaced with the actual function for the specific test
   window.redirectTo = jest.fn();
 
   // Mock document.getElementById for form inputs
@@ -62,7 +63,6 @@ beforeEach(() => {
 describe('User Interaction Tests', () => {
   test('Successful login', () => {
     window.loginUser();
-
     expect(alert).toHaveBeenCalledWith('Login Successful!');
     expect(window.redirectTo).toHaveBeenCalledWith(expect.stringContaining('Success.html'));
   });
@@ -76,7 +76,6 @@ describe('User Interaction Tests', () => {
     });
 
     window.loginUser();
-
     expect(alert).toHaveBeenCalledWith('Invalid Username or Password.');
     // Check redirectTo was not called
     expect(window.redirectTo).not.toHaveBeenCalled();
@@ -96,6 +95,28 @@ describe('User Interaction Tests', () => {
       })
     );
   });
+});
 
-  // Additional tests for UI interactions would go here
+// Test for the redirectTo function using the actual implementation
+describe('Window redirectTo function', () => {
+  test('should change window location href', () => {
+    // Store the original window.location
+    const originalLocation = window.location;
+
+    // Define a setter on the location object to spy on href changes
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { set href(url) { this._href = url; } },
+    });
+
+    // Call the actual redirectTo function with a mock URL
+    const testUrl = 'http://example.com';
+    redirectTo(testUrl);
+
+    // Check that the href was changed by the redirectTo function
+    expect(window.location._href).toBe(testUrl);
+
+    // Restore the original window.location
+    window.location = originalLocation;
+  });
 });
