@@ -22,7 +22,8 @@
       "^.+\\.js$": "babel-jest"
     },
     "collectCoverage": true
+  },
+  "dependencies": {
+    "jsdom": "^24.0.0"
   }
 }
-
-
