@@ -1,0 +1,71 @@
+const fs = require('fs');
+const { JSDOM } = require('jsdom');
+
+// Read the ViewFuelHistory.html file
+const html = fs.readFileSync('ViewFuelHistory.html', 'utf8');
+
+describe('View Fuel History Page', () => {
+    let dom;
+    let document;
+    let window;
+
+    beforeEach(() => {
+        // Set up a DOM environment using JSDOM
+        dom = new JSDOM(html);
+        document = dom.window.document;
+        window = dom.window;
+
+        // Mock any necessary functions or APIs
+
+        // Execute the script in the HTML
+        const scriptElement = document.querySelector('script');
+        window.eval(scriptElement.textContent);
+    });
+
+    test('Check if fuel history table exists', () => {
+        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
+        expect(fuelHistoryTable).not.toBeNull();
+    });
+
+    test('Check if fuel history table has rows', () => {
+        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
+        const rows = fuelHistoryTable.querySelectorAll('tr');
+        expect(rows.length).toBeGreaterThan(0);
+    });
+
+    test('Check if fuel history table displays the correct columns', () => {
+        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
+        const headerRow = fuelHistoryTable.querySelector('tr');
+        const headerCells = headerRow.querySelectorAll('th');
+
+        // Assuming column headers are 'Date', 'Fuel Type', 'Quantity'
+        const expectedHeaders = ['Date', 'Fuel Type', 'Quantity'];
+
+        headerCells.forEach((cell, index) => {
+            expect(cell.textContent).toBe(expectedHeaders[index]);
+        });
+    });
+
+    test('Check if fuel history table row data is correct', () => {
+        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
+        const dataRows = fuelHistoryTable.querySelectorAll('tr');
+
+        // Assuming data is hardcoded or fetched dynamically
+        // You can update this with actual data as needed for testing
+
+        // Assuming data is in the format [date, fuel type, quantity]
+        const expectedData = [
+            ['2021-08-16', 'Gasoline', '30'],
+            ['2021-08-15', 'Diesel', '40'],
+            // Add more sample data as needed
+        ];
+
+        dataRows.forEach((row, index) => {
+            const cells = row.querySelectorAll('td');
+            expectedData[index].forEach((expectedValue, cellIndex) => {
+                expect(cells[cellIndex].textContent).toBe(expectedValue);
+            });
+        });
+    });
+
+});

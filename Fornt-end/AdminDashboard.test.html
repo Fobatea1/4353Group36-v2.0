@@ -1,0 +1,61 @@
+const fs = require('fs');
+const { JSDOM } = require('jsdom');
+
+// Read the AdminDashboard.html file
+const html = fs.readFileSync('AdminDashboard.html', 'utf8');
+
+describe('Admin Dashboard', () => {
+    let dom;
+    let document;
+    let window;
+
+    beforeEach(() => {
+        // Set up a DOM environment using JSDOM
+        dom = new JSDOM(html);
+        document = dom.window.document;
+        window = dom.window;
+
+        // Mock localStorage
+        window.localStorage = {
+            clear: jest.fn()
+        };
+
+        // Mock confirm dialog
+        window.confirm = jest.fn(() => true);
+
+        // Execute the script in the HTML
+        const scriptElement = document.querySelector('script');
+        window.eval(scriptElement.textContent);
+    });
+
+    test('User list displays correctly', () => {
+        // Trigger DOMContentLoaded event
+        window.dispatchEvent(new Event('DOMContentLoaded'));
+
+        // Assert user list display
+        const userListElement = document.getElementById('userList');
+        expect(userListElement.innerHTML).toContain('Username');
+    });
+
+    test('Clear all data button clears user list', () => {
+        // Simulate button click
+        const clearAllDataButton = document.querySelector('button[onclick="clearAllData()"]');
+        clearAllDataButton.click();
+
+        // Assert user list is empty
+        const userListElement = document.getElementById('userList');
+        expect(userListElement.innerHTML).not.toContain('Username');
+
+        // Assert localStorage.clear() is called
+        expect(window.localStorage.clear).toHaveBeenCalled();
+    });
+
+    test('Clear all data confirmation dialog', () => {
+        // Simulate button click
+        const clearAllDataButton = document.querySelector('button[onclick="clearAllData()"]');
+        clearAllDataButton.click();
+
+        // Assert confirmation dialog is shown
+        expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to erase all data? This action cannot be undone.');
+    });
+});

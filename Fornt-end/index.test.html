@@ -1,0 +1,30 @@
+const fs = require('fs');
+const path = require('path');
+const { JSDOM } = require('jsdom');
+
+describe('Front-end HTML', () => {
+    let window, document;
+
+    beforeAll(() => {
+        const htmlPath = path.resolve(__dirname, 'index.html');
+        const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+        const dom = new JSDOM(htmlContent);
+        window = dom.window;
+        document = window.document;
+    });
+
+    it('should have a header with navigation links', () => {
+        const navigation = document.querySelector('header nav.navigation');
+        expect(navigation).toBeTruthy();
+        const links = navigation.querySelectorAll('a');
+        expect(links.length).toBeGreaterThan(0);
+    });
+
+    it('should have login and register buttons', () => {
+        const loginButton = document.querySelector('#loginButton');
+        const registerButton = document.querySelector('#registerButton');
+        expect(loginButton).toBeTruthy();
+        expect(registerButton).toBeTruthy();
+    });
+
+});
