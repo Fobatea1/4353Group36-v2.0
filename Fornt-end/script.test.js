@@ -8,16 +8,7 @@ beforeEach(() => {
   // Setup the mock for localStorage
   Object.defineProperty(window, 'localStorage', {
     value: {
-      getItem: jest.fn((key) => {
-        if (key === 'testUser') {
-          return JSON.stringify({
-            username: 'testUser',
-            password: 'correctPassword',
-            userType: 'Customer'
-          });
-        }
-        return null;
-      }),
+      getItem: jest.fn(),
       setItem: jest.fn(),
       removeItem: jest.fn(),
       clear: jest.fn(),
@@ -29,7 +20,6 @@ beforeEach(() => {
   global.alert = jest.fn();
 
   // Setup the mock for redirectTo on the window object
-  // Note: This mock will be replaced with the actual function for the specific test
   window.redirectTo = jest.fn();
 
   // Mock document.getElementById for form inputs
@@ -49,13 +39,17 @@ beforeEach(() => {
   });
 
   // Mock document.querySelector for any other DOM queries
-  document.querySelector = jest.fn().mockImplementation((selector) => {
-    if (selector === '.wrapper') {
-      return { classList: { remove: jest.fn(), add: jest.fn() } };
-    } else if (selector === 'input[name="userType"]:checked') {
-      return { value: 'Customer' };
-    }
-    return null;
+  document.querySelector = jest.fn((selector) => {
+    const mockElements = {
+      '.wrapper': { classList: { add: jest.fn(), remove: jest.fn() } },
+      '.login-link': { addEventListener: jest.fn() },
+      '.register-link': { addEventListener: jest.fn() },
+      '.btnLogin-popup': { addEventListener: jest.fn() },
+      '.btnRegister-popup': { addEventListener: jest.fn() },
+      '.icon-close': { addEventListener: jest.fn() },
+      'input[name="userType"]:checked': { value: 'Customer' }
+    };
+    return mockElements[selector] || null;
   });
 });
 
@@ -68,7 +62,6 @@ describe('User Interaction Tests', () => {
   });
 
   test('Unsuccessful login', () => {
-    // Setup to simulate wrong credentials
     document.getElementById.mockImplementation((id) => {
       if (id === 'loginUsername') return { value: 'wrongUser' };
       if (id === 'loginPassword') return { value: 'wrongPassword' };
@@ -77,7 +70,6 @@ describe('User Interaction Tests', () => {
 
     window.loginUser();
     expect(alert).toHaveBeenCalledWith('Invalid Username or Password.');
-    // Check redirectTo was not called
     expect(window.redirectTo).not.toHaveBeenCalled();
   });
 
@@ -97,26 +89,48 @@ describe('User Interaction Tests', () => {
   });
 });
 
-// Test for the redirectTo function using the actual implementation
+// Test suite for the redirectTo function
 describe('Window redirectTo function', () => {
   test('should change window location href', () => {
-    // Store the original window.location
-    const originalLocation = window.location;
+    // Mock window.location with an object to capture href changes
+    delete window.location;
+    window.location = { href: '' };
 
-    // Define a setter on the location object to spy on href changes
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { set href(url) { this._href = url; } },
-    });
-
-    // Call the actual redirectTo function with a mock URL
     const testUrl = 'http://example.com';
     redirectTo(testUrl);
 
-    // Check that the href was changed by the redirectTo function
-    expect(window.location._href).toBe(testUrl);
+    expect(window.location.href).toBe(testUrl);
 
-    // Restore the original window.location
-    window.location = originalLocation;
+    // Restore window.location
+    delete window.location;
+    window.location = Object.assign(document.createElement('a'), { href: '' });
   });
 });
+
+// Test suite for DOMContentLoaded event listeners
+describe('DOMContentLoaded event listeners', () => {
+  test('should attach listeners and modify classes correctly', () => {
+    // Trigger DOMContentLoaded event
+    const domContentLoadedEvent = new Event('DOMContentLoaded');
+    document.dispatchEvent(domContentLoadedEvent);
+
+    // Simulate events to test class list modifications
+    document.querySelector('.register-link').addEventListener.mock.calls[0][1](); // Simulate register link click
+    document.querySelector('.login-link').addEventListener.mock.calls[0][1](); // Simulate login link click
+    document.querySelector('.btnLogin-popup').addEventListener.mock.calls[0][1](); // Simulate login popup button click
+    document.querySelector('.icon-close').addEventListener.mock.calls[0][1](); // Simulate close icon click
+    document.querySelector('.btnRegister-popup').addEventListener.mock.calls[0][1](); // Simulate register popup button click
+
+    // Assertions for classList method calls
+    expect(document.querySelector('.wrapper').classList.add).toHaveBeenCalledWith('active'); // For register link
+    expect(document.querySelector('.wrapper').classList.remove).toHaveBeenCalledWith('active'); // For login link
+    expect(document.querySelector('.wrapper').classList.add).toHaveBeenCalledWith('active-popup'); // For login popup
+    expect(document.querySelector('.wrapper').classList.remove).toHaveBeenCalledWith('active'); // For login popup
+    expect(document.querySelector('.wrapper').classList.remove).toHaveBeenCalledWith('active-popup'); // For close icon
+    expect(document.querySelector('.wrapper').classList.add).toHaveBeenCalledWith('active-popup'); // For register popup
+    expect(document.querySelector('.wrapper').classList.add).toHaveBeenCalledWith('active'); // For register popup
+  });
+});
+
+// The below line is needed if you are using CommonJS syntax and exporting your functions for testing
+module.exports = { loginUser, registerUser, redirectTo };
