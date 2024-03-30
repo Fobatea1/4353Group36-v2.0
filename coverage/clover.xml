@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1711765017161" clover="3.2.0">
-  <project timestamp="1711765017161" name="All files">
+<coverage generated="1711767170346" clover="3.2.0">
+  <project timestamp="1711767170346" name="All files">
     <metrics statements="56" coveredstatements="51" conditionals="13" coveredconditionals="11" methods="14" coveredmethods="14" elements="83" coveredelements="76" complexity="0" loc="56" ncloc="56" packages="1" files="2" classes="2"/>
     <file name="HistoryManager.js" path="/workspaces/4353Group36-v2.0/Fornt-end/HistoryManager.js">
       <metrics statements="14" coveredstatements="14" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
