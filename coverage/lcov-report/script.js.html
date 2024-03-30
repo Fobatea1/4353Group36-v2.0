@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.11% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>32/45</span>
+                <span class='fraction'>40/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>7/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">44.44% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.19% </span>
+                <span class="strong">88.09% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>32/42</span>
+                <span class='fraction'>37/42</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -138,17 +138,17 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -156,13 +156,13 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -197,20 +197,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnRegisterPopup = document.querySelector('.btnRegister-popup');
     const btnCloseLogin = document.querySelector('.icon-close');
 &nbsp;
-    registerLink.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >wrapper.classList.add('active'))</span>;
-    loginLink.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >wrapper.classList.remove('active'))</span>;
-    btnLoginPopup.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >        wrapper.classList.add('active-popup');</span>
-<span class="cstat-no" title="statement not covered" >        wrapper.classList.remove('active');</span>
+    registerLink.addEventListener('click', () =&gt; wrapper.classList.add('active'));
+    loginLink.addEventListener('click', () =&gt; wrapper.classList.remove('active'));
+    btnLoginPopup.addEventListener('click', () =&gt; {
+        wrapper.classList.add('active-popup');
+        wrapper.classList.remove('active');
     });
-    btnCloseLogin.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >wrapper.classList.remove('active-popup'))</span>;
-    btnRegisterPopup.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >        wrapper.classList.add('active-popup');</span>
-<span class="cstat-no" title="statement not covered" >        wrapper.classList.add('active');</span>
+    btnCloseLogin.addEventListener('click', () =&gt; wrapper.classList.remove('active-popup'));
+    btnRegisterPopup.addEventListener('click', () =&gt; {
+        wrapper.classList.add('active-popup');
+        wrapper.classList.add('active');
     });
 &nbsp;
     document.getElementById('registerButton')?.addEventListener('click', window.registerUser);
-    document.getElementById('loginButton')?.addEventListener('click', window.loginUser);
+<span class="cstat-no" title="statement not covered" >    document.getElementById('loginButton')?.addEventListener('click', window.loginUser);</span>
 });
 &nbsp;
 window.loginUser = function() {
@@ -218,13 +218,13 @@ window.loginUser = function() {
     const password = document.getElementById('loginPassword').value;
     const user = JSON.parse(localStorage.getItem(username));
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (user &amp;&amp; username === user.username &amp;&amp; password === user.password) {</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (user &amp;&amp; username === user.username &amp;&amp; password === user.password) {
 <span class="cstat-no" title="statement not covered" >        sessionStorage.setItem('username', username);</span>
 <span class="cstat-no" title="statement not covered" >        sessionStorage.setItem('userType', user.userType);</span>
 <span class="cstat-no" title="statement not covered" >        alert('Login Successful!');</span>
 <span class="cstat-no" title="statement not covered" >        window.redirectTo('Success.html?username=' + encodeURIComponent(username));</span>
     } else {
-<span class="cstat-no" title="statement not covered" >        alert('Invalid Username or Password.');</span>
+        alert('Invalid Username or Password.');
     }
 };
 &nbsp;
@@ -256,7 +256,7 @@ window.redirectTo = function(url) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-30T02:11:51.636Z
+                at 2024-03-30T02:16:57.151Z
             </div>
         <script src="prettify.js"></script>
         <script>
