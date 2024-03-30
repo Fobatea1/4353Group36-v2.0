@@ -1,0 +1,32 @@
+const fs = require('fs');
+const { JSDOM } = require('jsdom');
+
+// Read the Success.html file
+const html = fs.readFileSync('Success.html', 'utf8');
+
+describe('Success Page', () => {
+    let dom;
+    let document;
+    let window;
+
+    beforeEach(() => {
+        // Set up a DOM environment using JSDOM
+        dom = new JSDOM(html);
+        document = dom.window.document;
+        window = dom.window;
+
+        // Execute the script in the HTML
+        const scriptElement = document.querySelector('script');
+        window.eval(scriptElement.textContent);
+    });
+
+    test('Success message is displayed', () => {
+        // Trigger any necessary events or actions
+
+        // Assert that the success message is displayed
+        const successMessageElement = document.getElementById('successMessage');
+        expect(successMessageElement).not.toBeNull();
+        expect(successMessageElement.textContent).toBe('Success! Your request has been processed.');
+    });
+
+});
