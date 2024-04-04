@@ -16,8 +16,10 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
+    <br><br><br><br>
     <div class="requestWrapper">
-        <h2>Request Fuel Quota</h2><br><br>
+        <h2>Request Fuel Quota</h2>
+        <br>
         <form id="fuelQuotaForm">
             <label for="gallonsRequested">How many Gallons do you need:</label>
             <input type="number" id="gallonsRequested" name="gallonsRequested" required><br><br>
@@ -46,7 +48,7 @@
             <label for="deliveryDate">Request Delivery Date:</label>
             <input type="date" id="deliveryDate" name="deliveryDate" required><br><br>
 
-            <button type="button" id="completeInfoBtn">Complete Info</button>
+            <button type="submit" id="completeInfoBtn">Complete Info</button>
         </form>
         <div id="postSubmissionOptions" style="display:none;">
             <button onclick="window.location.href='Profile.html'" class="btn">View Profile</button>
@@ -79,18 +81,14 @@
         document.getElementById('gallonsRequested').addEventListener('input', calculateTotalAmount);
         document.getElementById('fuelType').addEventListener('change', calculateTotalAmount);
 
-        document.getElementById('completeInfoBtn').addEventListener('click', function(event) {
+        document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
             const gallonsRequested = document.getElementById('gallonsRequested').value;
             const deliveryAddress = document.getElementById('deliveryAddress').value || document.getElementById('newAddress').value;
             const deliveryDate = document.getElementById('deliveryDate').value;
             const fuelType = document.getElementById('fuelType').options[document.getElementById('fuelType').selectedIndex].text;
             const totalAmountDue = document.getElementById('totalAmountDue').innerText;
-
-            // Validate input
-            if (!gallonsRequested || !deliveryAddress || !deliveryDate) {
-                alert("Please ensure all required fields are filled out.");
-                return;
-            }
 
             const fuelRequestData = {
                 gallonsRequested,
@@ -98,13 +96,12 @@
                 deliveryDate,
                 fuelType,
                 totalAmountDue,
-                username: sessionStorage.getItem('username') // Assuming a user session management system
+                username: sessionStorage.getItem('username') // Ensuring data is associated with the correct user
             };
 
-            // Here you would send fuelRequestData to your server or handle it as needed
-            console.log(fuelRequestData);
+            HistoryManager.addEntry(fuelRequestData);
 
-            // Show post-submission options
+            // Show the options after form submission
             document.getElementById('postSubmissionOptions').style.display = 'block';
         });
 
@@ -116,7 +113,7 @@
                 if(storedInfo) {
                     const userInfo = JSON.parse(storedInfo);
                     document.getElementById('deliveryAddress').value = userInfo.address1 || '';
-                    calculateTotalAmount(); // Ensure the total amount is calculated if gallons are already filled
+                    calculateTotalAmount(); // Calculate amount on load if applicable
                 }
             }
         }

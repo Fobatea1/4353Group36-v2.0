@@ -1,36 +1,28 @@
 class HistoryManager {
-    constructor(storage = window.localStorage, session = window.sessionStorage) {
-        this.storage = storage;
-        this.session = session;
-    }
-
-    getHistoryKey() {
+    static getHistoryKey() {
         // Get the username from sessionStorage to create a unique key per user
-        const username = this.session.getItem('username');
+        const username = sessionStorage.getItem('username');
         return `fuelRequestHistory_${username}`;
     }
 
-    getHistory() {
+    static getHistory() {
         // Retrieve history using the unique key
-        const historyKey = this.getHistoryKey();
-        const history = this.storage.getItem(historyKey);
+        const historyKey = HistoryManager.getHistoryKey();
+        const history = localStorage.getItem(historyKey);
         return history ? JSON.parse(history) : [];
     }
 
-    addEntry(entry) {
+    static addEntry(entry) {
         // Add an entry to the user's history
-        const historyKey = this.getHistoryKey();
-        const history = this.getHistory();
+        const historyKey = HistoryManager.getHistoryKey();
+        const history = HistoryManager.getHistory();
         history.push(entry);
-        this.storage.setItem(historyKey, JSON.stringify(history));
+        localStorage.setItem(historyKey, JSON.stringify(history));
     }
 
-    clearHistory() {
+    static clearHistory() {
         // Clear the user's history
-        const historyKey = this.getHistoryKey();
-        this.storage.removeItem(historyKey);
+        const historyKey = HistoryManager.getHistoryKey();
+        localStorage.removeItem(historyKey);
     }
 }
-
-// Make HistoryManager accessible in the global scope
-window.HistoryManager = new HistoryManager();

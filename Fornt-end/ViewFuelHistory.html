@@ -28,7 +28,6 @@
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            historyContainer.innerHTML = ''; // Clear previous content
             const fuelRequestHistory = HistoryManager.getHistory();
 
             if (fuelRequestHistory && fuelRequestHistory.length > 0) {
