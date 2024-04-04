@@ -32,5 +32,5 @@ class HistoryManager {
     }
 }
 
-// Exporting HistoryManager class for use in other modules or test files
-module.exports = HistoryManager;
+// Make HistoryManager accessible in the global scope
+window.HistoryManager = new HistoryManager();

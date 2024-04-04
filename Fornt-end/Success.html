@@ -124,6 +124,12 @@
                 zipcode: document.getElementById('zipcode').value
             };
 
+            // Check if all required fields are filled (Address 2 is optional)
+            if (!userInfo.firstName || !userInfo.lastName || !userInfo.address1 || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
             localStorage.setItem(`userInfo_${username}`, JSON.stringify(userInfo));
             alert('User Information Saved Successfully!');
             window.location.href = 'Profile.html'; // Redirect to Profile page
