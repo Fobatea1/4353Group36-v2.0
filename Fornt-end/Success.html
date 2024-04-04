@@ -34,7 +34,7 @@
                 </div>
                 <div class="input-box">
                     <input type="text" id="address2" maxlength="100">
-                    <label> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Address 2 (Optional)</label>
+                    <label>Address 2 (Optional)</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="city" maxlength="100" required>
@@ -94,6 +94,7 @@
                         <option value="WI">Wisconsin</option>
                         <option value="WY">Wyoming</option>
                     </select>
+                    <label>State</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="zipcode" minLength="5" maxLength="9" required>
@@ -124,9 +125,13 @@
                 zipcode: document.getElementById('zipcode').value
             };
 
-            // Check if all required fields are filled (Address 2 is optional)
             if (!userInfo.firstName || !userInfo.lastName || !userInfo.address1 || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
                 alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (userInfo.zipcode.length < 5 || userInfo.zipcode.length > 9) {
+                alert('Please enter a valid zipcode.');
                 return;
             }
 
