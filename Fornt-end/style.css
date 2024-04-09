@@ -259,6 +259,10 @@ header {
     line-height: 20px;
 }
 
+.adminCustomer{
+    color: #fff;
+}
+
 /*remember me and forgot password line*/
 .remember-forgot {
     font-size: .9em;

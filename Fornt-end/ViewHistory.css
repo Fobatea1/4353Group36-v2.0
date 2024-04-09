@@ -81,6 +81,44 @@ td, th {
     transform:scaleX(1);
     
 }
+
+select[id="fuelType"],
+input[type="number"],
+input[id = "deliveryDate"],
+input[type="text"]{
+    padding: 10px 20px 8px;
+    border: 0;
+    border-radius: 4px;
+    width: 300px;
+}
+
+.informationWrapper{
+    transform: translateY(50px);
+    margin-top: 150px;
+    position:relative;
+    width: 600px;
+
+    background: transparent;
+    border: 2px solid rgba(255, 255,255,.5);
+    border-radius: 20px;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    min-height: 20px;
+
+}
+
+.informationWrapper .form-box{
+    
+    width: 100%;
+    padding: 40px;
+    
+}
+
 .historyWrapper {
     width: 80%;
     max-width: 1800px;
