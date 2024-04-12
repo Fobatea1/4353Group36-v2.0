@@ -1,28 +1,36 @@
 class HistoryManager {
     static getHistoryKey() {
-        // Get the username from sessionStorage to create a unique key per user
         const username = sessionStorage.getItem('username');
         return `fuelRequestHistory_${username}`;
     }
 
     static getHistory() {
-        // Retrieve history using the unique key
         const historyKey = HistoryManager.getHistoryKey();
-        const history = localStorage.getItem(historyKey);
-        return history ? JSON.parse(history) : [];
+        return fetch(`http://localhost:3000/history/${historyKey}`)
+            .then(response => response.json())
+            .then(data => data)
+            .catch(error => console.error('Error retrieving history:', error));
     }
 
     static addEntry(entry) {
-        // Add an entry to the user's history
         const historyKey = HistoryManager.getHistoryKey();
-        const history = HistoryManager.getHistory();
-        history.push(entry);
-        localStorage.setItem(historyKey, JSON.stringify(history));
+        fetch(`http://localhost:3000/addHistory`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({key: historyKey, entry})
+        })
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error adding history entry:', error));
     }
 
     static clearHistory() {
-        // Clear the user's history
         const historyKey = HistoryManager.getHistoryKey();
-        localStorage.removeItem(historyKey);
+        fetch(`http://localhost:3000/clearHistory/${historyKey}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error clearing history:', error));
     }
 }
