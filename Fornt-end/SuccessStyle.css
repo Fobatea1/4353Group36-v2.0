@@ -172,3 +172,42 @@ header {
 .state {
     color: white; 
 }
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 200px;
+  }
+  
+  /* Styles for the options */
+  option {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Styles for the hover state */
+  option:hover {
+    background-color: #007bff;
+  }
+  
+  /* Styles for the selected option */
+  option:checked {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  /* Styles for the select dropdown arrow */
+select:after {
+    color:#000;
+    content: '\25BC'; /* Unicode for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
+  
