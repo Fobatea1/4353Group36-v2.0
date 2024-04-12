@@ -7,19 +7,11 @@ const btnCloseLogin = document.querySelector('.icon-close');
 
 registerLink.addEventListener('click', () => { wrapper.classList.add('active'); });
 loginLink.addEventListener('click', () => { wrapper.classList.remove('active'); });
-
 btnLoginPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
 btnLoginPopup.addEventListener('click', () => { wrapper.classList.remove('active'); });
 btnCloseLogin.addEventListener('click', () => { wrapper.classList.remove('active-popup'); });
-
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active'); });
-
-// Cookie is not required if session state is managed server-side
-document.cookie = "wrapper-visible=true";
-if (document.cookie.indexOf('wrapper-visible=true') !== -1) {
-    wrapper.classList.add('active-popup');
-}
 
 function loginUser() {
     const username = document.getElementById('loginUsername').value;
@@ -27,23 +19,26 @@ function loginUser() {
 
     fetch('http://localhost:3000/login', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({username, password})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok. Status: ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.message === 'Login successful') {
             sessionStorage.setItem('username', username);
-            sessionStorage.setItem('userType', data.userType); // Assuming userType is returned from the server
+            sessionStorage.setItem('userType', data.userType);
             window.location.href = 'Success.html?username=' + encodeURIComponent(username);
-            alert('Login Successful!');
         } else {
-            alert('Invalid Username or Password.');
+            alert(data.message);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Error logging in.');
+        alert('Error logging in. ' + error.toString());
     });
 }
 
@@ -59,15 +54,24 @@ function registerUser() {
 
     fetch('http://localhost:3000/register', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({username, password, userType})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, userType })
     })
-    .then(response => response.text())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok. Status: ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
-        alert(data);
-        wrapper.classList.remove('active-popup');
+        alert(data.message);
+        if (data.message === 'User registered successfully') {
+            wrapper.classList.remove('active-popup');
+        }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        alert('Error registering. ' + error.toString());
+    });
 }
 
 const registerButton = document.getElementById('registerButton');
@@ -78,7 +82,7 @@ loginButton.addEventListener('click', loginUser);
 
 document.addEventListener('DOMContentLoaded', () => {
     const userType = sessionStorage.getItem('userType');
-    if (location.pathname === '/Profile.html' && userType === 'Admin') {
+    if (location.pathname.endsWith('/Profile.html') && userType === 'Admin') {
         const adminButton = document.createElement('button');
         adminButton.textContent = 'View Admin Info';
         adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
