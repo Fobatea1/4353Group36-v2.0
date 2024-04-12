@@ -13,7 +13,11 @@ btnCloseLogin.addEventListener('click', () => { wrapper.classList.remove('active
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active'); });
 
-function loginUser() {
+function loginUser(event) {
+    event.preventDefault();
+    const loginButton = document.getElementById('loginButton');
+    loginButton.disabled = true;
+
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
 
@@ -38,7 +42,11 @@ function loginUser() {
         }
     })
     .catch(error => {
+        console.error('Login error:', error);
         alert('Error logging in. ' + error.toString());
+    })
+    .finally(() => {
+        loginButton.disabled = false;
     });
 }
 
@@ -70,6 +78,7 @@ function registerUser() {
         }
     })
     .catch(error => {
+        console.error('Registration error:', error);
         alert('Error registering. ' + error.toString());
     });
 }
