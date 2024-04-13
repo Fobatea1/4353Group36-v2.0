@@ -105,6 +105,17 @@ app.put('/userInfo/:username', (req, res) => {
     });
 });
 
+app.get('/allUsers', (req, res) => {
+    db.query('SELECT Username, AccountType FROM UserAccounts', (err, results) => {
+        if (err) {
+            console.error('Error fetching all users:', err);
+            res.status(500).send('Error fetching all users');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
