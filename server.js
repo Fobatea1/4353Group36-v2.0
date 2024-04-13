@@ -92,6 +92,20 @@ app.get('/allUsers', (req, res) => {
     });
 });
 
+app.post('/addFuelRequest', (req, res) => {
+    const { userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryCity, deliveryState, deliveryZipCode, deliveryDate } = req.body;
+
+    const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    
+    db.query(sql, [userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryCity, deliveryState, deliveryZipCode, deliveryDate], (err, result) => {
+        if (err) {
+            console.error('Error adding fuel request:', err);
+            return res.status(500).json({ message: 'Error adding fuel request' });
+        }
+        res.json({ message: 'Fuel request added successfully' });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
