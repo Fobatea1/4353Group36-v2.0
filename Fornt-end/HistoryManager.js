@@ -6,10 +6,13 @@ class HistoryManager {
 
     static getHistory() {
         const historyKey = HistoryManager.getHistoryKey();
-        return fetch(`http://localhost:3000/history/${historyKey}`)
-            .then(response => response.json())
-            .then(data => data)
-            .catch(error => console.error('Error retrieving history:', error));
+        return fetch(`http://localhost:3000/history/${historyKey}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(response => response.json())
+        .then(data => data)
+        .catch(error => console.error('Error retrieving history:', error));
     }
 
     static addEntry(entry) {
@@ -17,7 +20,7 @@ class HistoryManager {
         fetch(`http://localhost:3000/addHistory`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({key: historyKey, entry})
+            body: JSON.stringify({ key: historyKey, entry })
         })
         .then(response => response.text())
         .then(data => console.log(data))
