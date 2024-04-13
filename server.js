@@ -28,7 +28,6 @@ db.connect(err => {
 
 app.post('/register', (req, res) => {
     const { username, password, userType, firstName, lastName } = req.body;
-
     bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) {
             console.error('Error hashing password:', err);
@@ -48,7 +47,6 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const sql = 'SELECT UserID, Password, AccountType FROM UserAccounts WHERE Username = ?';
-
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
@@ -72,36 +70,14 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.get('/userInfo/:username', (req, res) => {
-    const username = req.params.username;
-    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
-    db.query(sql, [username], (err, results) => {
+app.get('/users', (req, res) => {
+    const sql = 'SELECT Username, AccountType FROM UserAccounts';
+    db.query(sql, (err, results) => {
         if (err) {
-            console.error('Error fetching user info:', err);
-            return res.status(500).json({ message: 'Error fetching user information' });
+            console.error('Error fetching users:', err);
+            return res.status(500).json({ message: 'Error fetching users' });
         }
-        if (results.length > 0) {
-            res.json(results[0]);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    });
-});
-
-app.put('/userInfo/:username', (req, res) => {
-    const { firstName, lastName, address, city, state, zipCode } = req.body;
-    const username = req.params.username;
-    const sql = 'UPDATE UserAccounts SET FirstName = ?, LastName = ?, Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
-    db.query(sql, [firstName, lastName, address, city, state, zipCode, username], (err, result) => {
-        if (err) {
-            console.error('Error updating user info:', err);
-            return res.status(500).json({ message: 'Error updating user information' });
-        }
-        if (result.affectedRows > 0) {
-            res.json({ message: 'User information updated successfully' });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
+        res.json(results);
     });
 });
 
