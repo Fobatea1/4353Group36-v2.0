@@ -29,12 +29,8 @@
                     <label>Last Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="address1" maxlength="100" required>
-                    <label>Address 1</label>
-                </div>
-                <div class="input-box">
-                    <input type="text" id="address2" maxlength="100">
-                    <label>Address 2 (Optional)</label>
+                    <input type="text" id="address" maxlength="100" required>
+                    <label>Address</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="city" maxlength="100" required>
@@ -118,14 +114,13 @@
             const userInfo = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
-                address1: document.getElementById('address1').value,
-                address2: document.getElementById('address2').value,
+                address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 state: document.getElementById('state').value,
                 zipcode: document.getElementById('zipcode').value
             };
 
-            if (!userInfo.firstName || !userInfo.lastName || !userInfo.address1 || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
+            if (!userInfo.firstName || !userInfo.lastName || !userInfo.address || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
                 alert('Please fill in all required fields.');
                 return;
             }
@@ -152,8 +147,7 @@
                 const userInfo = JSON.parse(storedInfo);
                 document.getElementById('firstName').value = userInfo.firstName || '';
                 document.getElementById('lastName').value = userInfo.lastName || '';
-                document.getElementById('address1').value = userInfo.address1 || '';
-                document.getElementById('address2').value = userInfo.address2 || '';
+                document.getElementById('address').value = userInfo.address || '';
                 document.getElementById('city').value = userInfo.city || '';
                 document.getElementById('state').value = userInfo.state || '';
                 document.getElementById('zipcode').value = userInfo.zipcode || '';
