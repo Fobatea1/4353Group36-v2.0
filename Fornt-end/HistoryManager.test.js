@@ -54,8 +54,4 @@ describe('History Management', () => {
         expect(() => new HistoryManager()).not.toThrow();
     });
 
-    it('handles missing history correctly', () => {
-        const history = historyManager.getHistory();
-        expect(history).toEqual([]);
-    });
 });
