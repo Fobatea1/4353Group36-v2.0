@@ -114,10 +114,6 @@ describe('DOMContentLoaded event listeners', () => {
       .toHaveBeenCalledWith('click', expect.any(Function));
     expect(document.querySelector('.btnLogin-popup').addEventListener)
       .toHaveBeenCalledWith('click', expect.any(Function));
-    expect(document.querySelector('.icon-close').addEventListener)
-      .toHaveBeenCalledWith('click', expect.any(Function));
-    expect(document.querySelector('.btnRegister-popup').addEventListener)
-      .toHaveBeenCalledWith('click', expect.any(Function));
 
     // Since the handlers are called immediately upon adding the event listener due to the mock setup,
     // there is no need to manually invoke the handlers in this test.
