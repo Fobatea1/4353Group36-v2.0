@@ -13,6 +13,19 @@ btnCloseLogin.addEventListener('click', () => { wrapper.classList.remove('active
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
 btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active'); });
 
+document.cookie = "wrapper-visible=true";
+
+if (document.cookie.indexOf('wrapper-visible=true') !== -1) {
+    wrapper.classList.add('active-popup');
+  }
+
+btnRegisterPopup.addEventListener('click', ()=> {
+    wrapper.classList.add('active-popup');
+    // Set the "wrapper-visible" cookie to "true" when the wrapper element is shown
+    document.cookie = "wrapper-visible=true";
+  });
+
+
 function loginUser(event) {
     event.preventDefault();
     const loginButton = document.getElementById('loginButton');
