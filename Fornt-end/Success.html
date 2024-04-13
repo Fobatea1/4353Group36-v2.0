@@ -90,7 +90,6 @@
                         <option value="WI">Wisconsin</option>
                         <option value="WY">Wyoming</option>
                     </select>
-                    <label>State</label>
                 </div>
                 <div class="input-box">
                     <input type="text" id="zipcode" minLength="5" maxLength="9" required>
@@ -103,6 +102,27 @@
 
     <script>
         document.getElementById('userGreeting').innerText = sessionStorage.getItem('username') || 'User';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            populateUserInfo();
+        });
+
+        function populateUserInfo() {
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                fetch(`http://localhost:3000/userInfo/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('firstName').value = data.FirstName || '';
+                    document.getElementById('lastName').value = data.LastName || '';
+                    document.getElementById('address').value = data.Address || '';
+                    document.getElementById('city').value = data.City || '';
+                    document.getElementById('state').value = data.State || '';
+                    document.getElementById('zipcode').value = data.ZipCode || '';
+                })
+                .catch(error => console.error('Error loading user info:', error));
+            }
+        }
 
         function saveUserInfo() {
             const username = sessionStorage.getItem('username');
@@ -117,44 +137,29 @@
                 address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 state: document.getElementById('state').value,
-                zipcode: document.getElementById('zipcode').value
+                zipCode: document.getElementById('zipcode').value
             };
 
-            if (!userInfo.firstName || !userInfo.lastName || !userInfo.address || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-
-            if (userInfo.zipcode.length < 5 || userInfo.zipcode.length > 9) {
-                alert('Please enter a valid zipcode.');
-                return;
-            }
-
-            localStorage.setItem(`userInfo_${username}`, JSON.stringify(userInfo));
-            alert('User Information Saved Successfully!');
-            window.location.href = 'Profile.html'; // Redirect to Profile page
+            fetch(`http://localhost:3000/userInfo/${username}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userInfo)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to save');
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message || 'Information updated successfully');
+                window.location.href = 'Profile.html'; // Redirect to Profile page
+            })
+            .catch(error => {
+                console.error('Failed to update user info:', error);
+                alert('Error updating information.');
+            });
         }
-
-        function populateUserInfo() {
-            const username = sessionStorage.getItem('username');
-            if (!username) {
-                console.log("No username found for loading user info.");
-                return;
-            }
-
-            const storedInfo = localStorage.getItem(`userInfo_${username}`);
-            if (storedInfo) {
-                const userInfo = JSON.parse(storedInfo);
-                document.getElementById('firstName').value = userInfo.firstName || '';
-                document.getElementById('lastName').value = userInfo.lastName || '';
-                document.getElementById('address').value = userInfo.address || '';
-                document.getElementById('city').value = userInfo.city || '';
-                document.getElementById('state').value = userInfo.state || '';
-                document.getElementById('zipcode').value = userInfo.zipcode || '';
-            }
-        }
-
-        window.onload = populateUserInfo;
     </script>
 </body>
 </html>

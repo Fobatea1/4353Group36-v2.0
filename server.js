@@ -27,15 +27,15 @@ db.connect(err => {
 });
 
 app.post('/register', (req, res) => {
-    const { username, password, userType } = req.body;
+    const { username, password, userType, firstName, lastName } = req.body;
 
     bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) {
             console.error('Error hashing password:', err);
             return res.status(500).json({ message: 'Error processing your registration' });
         }
-        const sql = 'INSERT INTO UserAccounts (Username, Password, AccountType) VALUES (?, ?, ?)';
-        db.query(sql, [username, hash, userType], (err, result) => {
+        const sql = 'INSERT INTO UserAccounts (Username, Password, AccountType, FirstName, LastName) VALUES (?, ?, ?, ?, ?)';
+        db.query(sql, [username, hash, userType, firstName, lastName], (err, result) => {
             if (err) {
                 console.error('Error during registration:', err);
                 return res.status(500).json({ message: 'Error registering the user' });
@@ -74,7 +74,7 @@ app.post('/login', (req, res) => {
 
 app.get('/userInfo/:username', (req, res) => {
     const username = req.params.username;
-    const sql = 'SELECT Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
+    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error fetching user info:', err);
@@ -89,10 +89,10 @@ app.get('/userInfo/:username', (req, res) => {
 });
 
 app.put('/userInfo/:username', (req, res) => {
-    const { address, city, state, zipCode } = req.body;
+    const { firstName, lastName, address, city, state, zipCode } = req.body;
     const username = req.params.username;
-    const sql = 'UPDATE UserAccounts SET Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
-    db.query(sql, [address, city, state, zipCode, username], (err, result) => {
+    const sql = 'UPDATE UserAccounts SET FirstName = ?, LastName = ?, Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
+    db.query(sql, [firstName, lastName, address, city, state, zipCode, username], (err, result) => {
         if (err) {
             console.error('Error updating user info:', err);
             return res.status(500).json({ message: 'Error updating user information' });

@@ -40,8 +40,8 @@
                     .then(userInfo => {
                         if(userInfo) {
                             document.getElementById('displayInfo').innerHTML = `
-                                <p>First Name: ${userInfo.firstName || ''}</p>
-                                <p>Last Name: ${userInfo.lastName || ''}</p>
+                                <p>First Name: ${userInfo.FirstName || ''}</p>
+                                <p>Last Name: ${userInfo.LastName || ''}</p>
                                 <p>Address: ${userInfo.Address || ''}</p>
                                 <p>City: ${userInfo.City || ''}</p>
                                 <p>State: ${userInfo.State || ''}</p>
@@ -75,7 +75,7 @@
         }
 
         function editUserInfo() {
-            window.location.href = 'UpdateUserInfo.html'; // Ensure this page exists for updating user info
+            window.location.href = 'Success.html';
         }
     </script>
 </body>
