@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,34 +33,34 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            displayUserInfo();
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                fetch(`http://localhost:3000/userInfo/${username}`)
+                    .then(response => response.json())
+                    .then(userInfo => {
+                        if(userInfo) {
+                            document.getElementById('displayInfo').innerHTML = `
+                                <p>First Name: ${userInfo.firstName || ''}</p>
+                                <p>Last Name: ${userInfo.lastName || ''}</p>
+                                <p>Address: ${userInfo.Address || ''}</p>
+                                <p>City: ${userInfo.City || ''}</p>
+                                <p>State: ${userInfo.State || ''}</p>
+                                <p>Zipcode: ${userInfo.ZipCode || ''}</p>
+                            `;
+                            document.getElementById('userGreeting').textContent = `Welcome, ${username}`;
+                        } else {
+                            document.getElementById('displayInfo').innerHTML = "<p>No information found.</p>";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch user info:', error);
+                        document.getElementById('displayInfo').innerHTML = "<p>Error loading information. Please refresh the page.</p>";
+                    });
+            } else {
+                document.getElementById('displayInfo').innerHTML = "<p>Please log in to view information.</p>";
+            }
             displayAdminButtonIfNeeded();
         });
-
-        function displayUserInfo() {
-            const username = sessionStorage.getItem('username');
-            if (!username) {
-                document.getElementById('displayInfo').innerHTML = "<p>Please log in to view information.</p>";
-                return;
-            }
-
-            const userInfoKey = `userInfo_${username}`;
-            const storedInfo = localStorage.getItem(userInfoKey);
-            if (storedInfo) {
-                const userInfo = JSON.parse(storedInfo);
-                document.getElementById('displayInfo').innerHTML = `
-                    <p>First Name: ${userInfo.firstName || ''}</p>
-                    <p>Last Name: ${userInfo.lastName || ''}</p>
-                    <p>Address 1: ${userInfo.address1 || ''}</p>
-                    <p>Address 2: ${userInfo.address2 || ''}</p>
-                    <p>City: ${userInfo.city || ''}</p>
-                    <p>State: ${userInfo.state || ''}</p>
-                    <p>Zipcode: ${userInfo.zipcode || ''}</p>
-                `;
-            } else {
-                document.getElementById('displayInfo').innerHTML = "<p>No information saved.</p>";
-            }
-        }
 
         function displayAdminButtonIfNeeded() {
             const userType = sessionStorage.getItem('userType');
@@ -69,29 +68,15 @@
                 const buttonContainer = document.getElementById('buttonContainer');
                 const adminButton = document.createElement('button');
                 adminButton.innerText = 'View Admin Info';
-                adminButton.setAttribute('onclick', "window.location.href='AdminDashboard.html'");
+                adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
                 adminButton.classList.add('btn');
                 buttonContainer.appendChild(adminButton);
             }
         }
 
         function editUserInfo() {
-            window.location.href = 'Success.html';
+            window.location.href = 'UpdateUserInfo.html'; // Ensure this page exists for updating user info
         }
     </script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const username = sessionStorage.getItem('username');
-        if (username) {
-            const userInfoKey = `userInfo_${username}`;
-            const userInfo = JSON.parse(localStorage.getItem(userInfoKey));
-            if (userInfo && userInfo.firstName) {
-                document.getElementById('userGreeting').textContent = userInfo.firstName;
-            }
-        }
-    });
-    </script>
-
 </body>
 </html>

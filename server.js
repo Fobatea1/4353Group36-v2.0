@@ -72,34 +72,39 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.post('/addHistory', (req, res) => {
-    const { userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryDate } = req.body;
-    const sql = `INSERT INTO FuelHistory (UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryDate)
-                 VALUES (?, ?, ?, ?, ?, ?)`;
-
-    db.query(sql, [userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryDate], (err, result) => {
+app.get('/userInfo/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'SELECT Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
+    db.query(sql, [username], (err, results) => {
         if (err) {
-            console.error('Error inserting fuel history:', err);
-            return res.status(500).json({ message: 'Error adding fuel history' });
+            console.error('Error fetching user info:', err);
+            return res.status(500).json({ message: 'Error fetching user information' });
         }
-        res.json({ message: 'Fuel history added successfully' });
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
     });
 });
 
-app.delete('/clearHistory', (req, res) => {
-    const { userID } = req.body; // Assuming the userID is sent in the request body
-    const sql = 'DELETE FROM FuelHistory WHERE UserID = ?';
-
-    db.query(sql, [userID], (err, result) => {
+app.put('/userInfo/:username', (req, res) => {
+    const { address, city, state, zipCode } = req.body;
+    const username = req.params.username;
+    const sql = 'UPDATE UserAccounts SET Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
+    db.query(sql, [address, city, state, zipCode, username], (err, result) => {
         if (err) {
-            console.error('Error clearing history:', err);
-            return res.status(500).json({ message: 'Error clearing history' });
+            console.error('Error updating user info:', err);
+            return res.status(500).json({ message: 'Error updating user information' });
         }
-        res.json({ message: 'History cleared successfully' });
+        if (result.affectedRows > 0) {
+            res.json({ message: 'User information updated successfully' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
     });
 });
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
