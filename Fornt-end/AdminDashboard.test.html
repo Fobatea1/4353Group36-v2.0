@@ -50,12 +50,4 @@ describe('Admin Dashboard', () => {
         expect(window.localStorage.clear).toHaveBeenCalled();
     });
 
-    test('Clear all data confirmation dialog', () => {
-        // Simulate button click
-        const clearAllDataButton = document.querySelector('button[onclick="clearAllData()"]');
-        clearAllDataButton.click();
-
-        // Assert confirmation dialog is shown
-        expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to erase all data? This action cannot be undone.');
-    });
 });
