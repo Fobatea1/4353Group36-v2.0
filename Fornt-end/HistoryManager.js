@@ -1,36 +1,37 @@
 class HistoryManager {
-    static getHistoryKey() {
-        const username = sessionStorage.getItem('username');
-        return `fuelRequestHistory_${username}`;
+    static async addEntry(entry) {
+        try {
+            const response = await fetch(`http://localhost:3000/addFuelHistory`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(entry)
+            });
+            const data = await response.text();
+            console.log(data);
+        } catch (error) {
+            console.error('Error adding history entry:', error);
+        }
     }
 
-    static getHistory() {
-        const historyKey = HistoryManager.getHistoryKey();
-        return fetch(`http://localhost:3000/history/${historyKey}`)
-            .then(response => response.json())
-            .then(data => data)
-            .catch(error => console.error('Error retrieving history:', error));
+    static async getHistory(username) {
+        try {
+            const response = await fetch(`http://localhost:3000/getFuelHistory/${username}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error retrieving history:', error);
+        }
     }
 
-    static addEntry(entry) {
-        const historyKey = HistoryManager.getHistoryKey();
-        fetch(`http://localhost:3000/addHistory`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({key: historyKey, entry})
-        })
-        .then(response => response.text())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error adding history entry:', error));
-    }
-
-    static clearHistory() {
-        const historyKey = HistoryManager.getHistoryKey();
-        fetch(`http://localhost:3000/clearHistory/${historyKey}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.text())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error clearing history:', error));
+    static async clearHistory(username) {
+        try {
+            const response = await fetch(`http://localhost:3000/clearFuelHistory/${username}`, {
+                method: 'DELETE'
+            });
+            const data = await response.text();
+            console.log(data);
+        } catch (error) {
+            console.error('Error clearing history:', error);
+        }
     }
 }

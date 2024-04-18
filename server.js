@@ -119,3 +119,39 @@ app.get('/allUsers', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+
+app.post('/addFuelHistory', (req, res) => {
+    const { UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
+    const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate], (err, result) => {
+        if (err) {
+            console.error('Error adding fuel history:', err);
+            return res.status(500).json({ message: 'Error adding fuel history' });
+        }
+        res.json({ message: 'Fuel history added successfully' });
+    });
+});
+
+app.get('/getFuelHistory/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'SELECT * FROM FuelHistory JOIN UserAccounts ON FuelHistory.UserID = UserAccounts.UserID WHERE UserAccounts.Username = ?';
+    db.query(sql, [username], (err, results) => {
+        if (err) {
+            console.error('Error fetching fuel history:', err);
+            return res.status(500).json({ message: 'Error fetching fuel history' });
+        }
+        res.json(results);
+    });
+});
+
+app.delete('/clearFuelHistory/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'DELETE FROM FuelHistory WHERE UserID = (SELECT UserID FROM UserAccounts WHERE Username = ?)';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            console.error('Error clearing fuel history:', err);
+            return res.status(500).json({ message: 'Error clearing fuel history' });
+        }
+        res.json({ message: 'Fuel history cleared successfully' });
+    });
+});

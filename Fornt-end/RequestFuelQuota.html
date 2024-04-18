@@ -65,7 +65,7 @@
         document.getElementById('changeAddressBtn').addEventListener('click', function() {
             document.getElementById('newAddressContainer').style.display = 'block';
         });
-
+    
         document.getElementById('confirmAddressBtn').addEventListener('click', function() {
             var newAddress = document.getElementById('newAddress').value;
             if(newAddress) {
@@ -75,26 +75,26 @@
                 alert('Please enter a new address.');
             }
         });
-
+    
         function calculateTotalAmount() {
             const gallons = document.getElementById('gallonsRequested').value;
             const pricePerGallon = document.getElementById('fuelType').value;
             const totalAmount = gallons * pricePerGallon;
             document.getElementById('totalAmountDue').innerText = `$${totalAmount.toFixed(2)}`;
         }
-
+    
         document.getElementById('gallonsRequested').addEventListener('input', calculateTotalAmount);
         document.getElementById('fuelType').addEventListener('change', calculateTotalAmount);
-
+    
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
-
+    
             const gallonsRequested = document.getElementById('gallonsRequested').value;
             const deliveryAddress = document.getElementById('deliveryAddress').value || document.getElementById('newAddress').value;
             const deliveryDate = document.getElementById('deliveryDate').value;
             const fuelType = document.getElementById('fuelType').options[document.getElementById('fuelType').selectedIndex].text;
             const totalAmountDue = document.getElementById('totalAmountDue').innerText;
-
+    
             const fuelRequestData = {
                 gallonsRequested,
                 deliveryAddress,
@@ -103,26 +103,29 @@
                 totalAmountDue,
                 username: sessionStorage.getItem('username') // Ensuring data is associated with the correct user
             };
-
+    
             HistoryManager.addEntry(fuelRequestData);
-
+    
             // Show the options after form submission
             document.getElementById('postSubmissionOptions').style.display = 'block';
         });
-
-        function populateDeliveryAddress() {
+    
+        async function populateDeliveryAddress() {
             const username = sessionStorage.getItem('username');
             if (username) {
-                const userInfoKey = `userInfo_${username}`;
-                const storedInfo = localStorage.getItem(userInfoKey);
-                if(storedInfo) {
-                    const userInfo = JSON.parse(storedInfo);
-                    document.getElementById('deliveryAddress').value = userInfo.address1 || '';
-                    calculateTotalAmount(); // Calculate amount on load if applicable
+                try {
+                    const response = await fetch(`http://localhost:3000/userInfo/${username}`);
+                    const userInfo = await response.json();
+                    if(userInfo.address) {
+                        document.getElementById('deliveryAddress').value = userInfo.address;
+                        calculateTotalAmount(); // Calculate amount on load if applicable
+                    }
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
                 }
             }
         }
-
+    
         window.onload = populateDeliveryAddress;
     </script>
 </body>
