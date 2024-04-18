@@ -13,10 +13,14 @@ class HistoryManager {
     }
 
     static addEntry(entry) {
-        // Add an entry to the user's history
+        // Modify here to include new data fields
         const historyKey = HistoryManager.getHistoryKey();
         const history = HistoryManager.getHistory();
-        history.push(entry);
+        const extendedEntry = {
+            ...entry,
+            // Assuming entry already has the new fields if passed correctly from the form submission
+        };
+        history.push(extendedEntry);
         localStorage.setItem(historyKey, JSON.stringify(history));
     }
 
