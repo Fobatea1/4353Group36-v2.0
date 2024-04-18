@@ -2,14 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+const secretKey = 'your_secret_key';
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const db = mysql.createConnection({
     host: '127.0.0.1',
@@ -28,7 +32,6 @@ db.connect(err => {
 
 app.post('/register', (req, res) => {
     const { username, password, userType, firstName, lastName } = req.body;
-
     bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) {
             console.error('Error hashing password:', err);
@@ -47,8 +50,7 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    const sql = 'SELECT UserID, Password, AccountType FROM UserAccounts WHERE Username = ?';
-
+    const sql = 'SELECT UserID, Password FROM UserAccounts WHERE Username = ?';
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
@@ -61,7 +63,9 @@ app.post('/login', (req, res) => {
                     return res.status(500).json({ message: 'Login failed' });
                 }
                 if (isMatch) {
-                    res.json({ message: 'Login successful', userType: results[0].AccountType });
+                    const token = jwt.sign({ userID: results[0].UserID }, secretKey, { expiresIn: '1h' });
+                    res.cookie('token', token, { httpOnly: true });
+                    res.json({ message: 'Login successful' });
                 } else {
                     res.json({ message: 'Invalid username or password' });
                 }
@@ -109,27 +113,30 @@ app.get('/allUsers', (req, res) => {
     db.query('SELECT Username, AccountType FROM UserAccounts', (err, results) => {
         if (err) {
             console.error('Error fetching all users:', err);
-            res.status(500).send('Error fetching all users');
-        } else {
-            res.json(results);
+            return res.status(500).json({ message: 'Error fetching all users' });
         }
+        res.json(results);
     });
-});
-
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
 });
 
 app.post('/addFuelHistory', (req, res) => {
-    const { UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
-    const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql, [UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate], (err, result) => {
-        if (err) {
-            console.error('Error adding fuel history:', err);
-            return res.status(500).json({ message: 'Error adding fuel history' });
-        }
-        res.json({ message: 'Fuel history added successfully' });
-    });
+    const token = req.cookies.token;
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        const userID = decoded.userID;
+        const { GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
+        const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, Fuel Type, Total AmountDue, DeliveryAddress, DeliveryCity, Delivery State, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        db.query(sql, [userID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate], (err, result) => {
+            if (err) {
+                console.error('Error adding fuel history:', err);
+                return res.status(500).json({ message: 'Error adding fuel history' });
+            }
+            res.json({ message: 'Fuel history added successfully' });
+        });
+    } catch (err) {
+        console.error('Token verification failed:', err);
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
 });
 
 app.get('/getFuelHistory/:username', (req, res) => {
@@ -154,4 +161,8 @@ app.delete('/clearFuelHistory/:username', (req, res) => {
         }
         res.json({ message: 'Fuel history cleared successfully' });
     });
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 });
