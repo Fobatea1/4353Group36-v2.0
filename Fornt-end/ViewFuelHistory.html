@@ -28,7 +28,26 @@
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            const fuelRequestHistory = HistoryManager.getHistory();
+            const fuelRequestHistory = [
+                {
+                    "requestNumber": 1,
+                    "gallonsRequested": 50,
+                    "fuelType": "Unleaded",
+                    "totalAmountDue": 150,
+                    "deliveryAddress": "123 Main St",
+                    "deliveryDate": "2022-01-01",
+                    "stateDelivery": "Texas"
+                },
+                {
+                    "requestNumber": 2,
+                    "gallonsRequested": 100,
+                    "fuelType": "Diesel",
+                    "totalAmountDue": 300,
+                    "deliveryAddress": "456 Elm St",
+                    "deliveryDate": "2022-02-01",
+                    "stateDelivery": "Fuckall"
+                }
+            ];
 
             if (fuelRequestHistory && fuelRequestHistory.length > 0) {
                 const table = document.createElement('table');
@@ -37,7 +56,7 @@
                 const tbody = document.createElement('tbody');
 
                 const headRow = document.createElement('tr');
-                ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
+                ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'State','Delivery Date', ].forEach(heading => {
                     const th = document.createElement('th');
                     th.textContent = heading;
                     headRow.appendChild(th);
@@ -46,14 +65,14 @@
                 thead.appendChild(headRow);
                 table.appendChild(thead);
 
-                fuelRequestHistory.forEach((entry, index) => {
+                fuelRequestHistory.forEach((entry) => {
                     const newRow = document.createElement('tr');
 
                     const requestNumberCell = document.createElement('td');
-                    requestNumberCell.textContent = index + 1;
+                    requestNumberCell.textContent = entry.requestNumber;
                     newRow.appendChild(requestNumberCell);
 
-                    ['gallonsRequested', 'fuelType', 'totalAmountDue', 'deliveryAddress', 'deliveryDate'].forEach(key => {
+                    ['gallonsRequested', 'fuelType', 'totalAmountDue', 'deliveryAddress', 'stateDelivery', 'deliveryDate'].forEach(key => {
                         const td = document.createElement('td');
                         td.textContent = entry[key];
                         newRow.appendChild(td);
@@ -72,7 +91,7 @@
         function clearHistory() {
             if(confirm("Are you sure you want to clear all fuel history?")) {
                 HistoryManager.clearHistory();
-                displayFuelHistory(); // Refresh the history display
+                displayFuelHistory(); // Refreshthe history display
             }
         }
 
