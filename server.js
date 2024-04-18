@@ -11,7 +11,13 @@ const port = 3000;
 const saltRounds = 10;
 const secretKey = 'your_secret_key';
 
-app.use(cors());
+const corsOptions = {
+    origin: 'http://127.0.0.1:5502', // Adjust if necessary
+    optionsSuccessStatus: 200,
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
