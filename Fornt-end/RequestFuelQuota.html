@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Request Fuel Quota</title>
-    <link rel="stylesheet" href="RequestQuota.css">
+    <link rel="stylesheet" href="ViewHistory.css">
     <script src="HistoryManager.js" defer></script>
 </head>
 <body>
@@ -16,14 +16,14 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
-    <div class="requestWrapper">
+    <div class="historyWrapper">
         <h2>Request Fuel Quota</h2>
         <form id="fuelQuotaForm">
             <label for="gallonsRequested">How many Gallons do you need:</label>
             <input type="number" id="gallonsRequested" name="gallonsRequested" required><br><br>
 
             <label for="deliveryState">Delivery State:</label>
-            <input type="text" id="deliveryState" name="deliveryState" required readonly><br>
+            <input type="text" id="deliveryState" name="deliveryState" required readonly>
             <button type="button" onclick="changeState()" class="btn">Change State</button>
             <div id="newStateInput" style="display:none;">
                 <select id="newState" name="newState">
@@ -95,6 +95,7 @@
             <label for="deliveryAddress">Delivery Address:</label>
             <input type="text" id="deliveryAddress" name="deliveryAddress" required readonly><br>
             <button type="button" onclick="changeAddress()" class="btn">Change Address</button>
+            <br>
             <div id="newAddressInput" style="display:none;">
                 <input type="text" id="newAddress" placeholder="Enter new address">
                 <button type="button" onclick="submitNewAddress()" class="btn">Submit Address</button>
@@ -107,7 +108,7 @@
                 <input type="text" id="newCity" placeholder="Enter new city">
                 <button type="button" onclick="submitNewCity()" class="btn">Submit City</button>
             </div><br>
-
+            <br>
             <label for="zipcode">Zipcode:</label>
             <input type="text" id="zipcode" name="zipcode" required readonly><br>
             <button type="button" onclick="changeZipcode()" class="btn">Change Zipcode</button>
@@ -119,7 +120,7 @@
             <label for="deliveryDate">Request Delivery Date:</label>
             <input type="date" id="deliveryDate" name="deliveryDate" required><br><br>
 
-            <button type="submit" id="completeInfoBtn">Complete Info</button>
+            <button type="submit" class="btn" id="completeInfoBtn">Complete Info</button>
         </form>
         <div id="postSubmissionOptions">
             <button onclick="window.location.href='Profile.html'" class="btn">View Profile</button>
