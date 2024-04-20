@@ -78,7 +78,7 @@
         
         function calculateTotalAmount() {
             const gallons = document.getElementById('GallonsRequested').value;
-            const pricePerGallon = document.getElementById('fuelType').value;
+            const pricePerGallon = document.getElementById('FuelType').value;
             const totalAmount = gallons * pricePerGallon;
             document.getElementById('TotalAmountDue').innerText = `$${totalAmount.toFixed(2)}`;
         }

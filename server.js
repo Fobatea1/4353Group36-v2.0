@@ -129,7 +129,6 @@ app.get('/allUsers', (req, res) => {
 });
 
 app.post('/addFuelHistory', (req, res) => {
-    console.log("Raw request body:", req.body);
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return res.status(401).json({ message: 'Authorization header is missing' });
@@ -143,27 +142,11 @@ app.post('/addFuelHistory', (req, res) => {
     try {
         const decoded = jwt.verify(token, secretKey);
         const UserID = decoded.userID;
-        
-        console.log("Token decoded successfully. User ID:", UserID);
 
-        const { GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
-        
-        console.log("Received at addFuelHistory:", req.body);
-        console.log("Extracted Data:", {
-            GallonsRequested,
-            FuelType,
-            TotalAmountDue,
-            DeliveryAddress,
-            DeliveryCity,
-            DeliveryState,
-            DeliveryZipCode,
-            DeliveryDate
-        });
-
-        if (!UserID) {
-            console.error("Error: userID is undefined.");
-            return res.status(400).json({ message: "userID is missing or invalid" });
-        }
+        // Assuming FuelType comes in the format "Type - $Price/gallon"
+        const { GallonsRequested, FuelType, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
+        const pricePerGallon = parseFloat(FuelType.split(' - $')[1].split('/gallon')[0]);
+        const TotalAmountDue = GallonsRequested * pricePerGallon;
 
         const sql = `INSERT INTO FuelHistory (
             UserID, 
@@ -180,8 +163,8 @@ app.post('/addFuelHistory', (req, res) => {
         db.query(sql, [
             UserID, 
             GallonsRequested, 
-            FuelType, 
-            TotalAmountDue, 
+            FuelType.split(' - ')[0], // Assuming we only want to store the fuel type without price
+            TotalAmountDue.toFixed(2), // Ensure it's a string with 2 decimal places
             DeliveryAddress, 
             DeliveryCity, 
             DeliveryState, 
@@ -189,22 +172,9 @@ app.post('/addFuelHistory', (req, res) => {
             DeliveryDate
         ], (err, result) => {
             if (err) {
-                console.error('SQL Error:', err);
-                console.error('SQL Query:', sql);
-                console.error('Values used in query:', {
-                    UserID, 
-                    GallonsRequested, 
-                    FuelType, 
-                    TotalAmountDue, 
-                    DeliveryAddress, 
-                    DeliveryCity, 
-                    DeliveryState, 
-                    DeliveryZipCode, 
-                    DeliveryDate
-                });
+                console.error('Error adding fuel history:', err);
                 return res.status(500).json({ message: 'Error adding fuel history' });
             }
-            console.log('Insertion successful, result:', result);
             res.json({ message: 'Fuel history added successfully' });
         });
     } catch (err) {
@@ -212,7 +182,6 @@ app.post('/addFuelHistory', (req, res) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 });
-
 
 app.get('/getFuelHistory/:username', (req, res) => {
     const username = req.params.username;

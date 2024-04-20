@@ -55,7 +55,15 @@
 
                         ['GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryDate'].forEach(key => {
                             const td = document.createElement('td');
-                            td.textContent = entry[key];
+                            if (key === 'TotalAmountDue') {
+                                td.textContent = `$${entry[key]}`;
+                            } else if (key === 'DeliveryDate') {
+                                const date = new Date(entry[key]);
+                                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+                                td.textContent = formattedDate;
+                            } else {
+                                td.textContent = entry[key];
+                            }
                             newRow.appendChild(td);
                         });
 
