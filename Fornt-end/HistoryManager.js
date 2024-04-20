@@ -1,26 +1,45 @@
 class HistoryManager {
     static async addEntry(entry) {
         try {
-            const payload = {
-                gallonsRequested: entry.gallonsRequested,
-                deliveryAddress: entry.deliveryAddress,
-                deliveryDate: entry.deliveryDate,
-                fuelType: entry.fuelType.split(' - ')[0], // Extracting just the type if passed with price
-                totalAmountDue: parseFloat(entry.totalAmountDue.replace('$', ''))
-            };
-
-            const response = await fetch(`http://localhost:3000/addFuelHistory`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload),
-                credentials: 'include' // Important for sessions managed via HttpOnly cookies
-            });
-            const data = await response.json();
-            console.log(data);
+          const headers = new Headers();
+          headers.append('Content-Type', 'application/json');
+          const token = sessionStorage.getItem('token'); // Get the token from sessionStorage
+          console.log("Token:", token);
+          if (token) {
+            headers.append('Authorization', 'Bearer ' + token); // Append the token to the headers
+          }
+          console.log(entry);
+          console.log("Sending entry data:", JSON.stringify({
+            GallonsRequested: entry.GallonsRequested,
+            FuelType: entry.FuelType,
+            TotalAmountDue: entry.TotalAmountDue,
+            DeliveryAddress: entry.DeliveryAddress,
+            DeliveryCity: entry.DeliveryCity,
+            DeliveryState: entry.DeliveryState,
+            DeliveryZipCode: entry.DeliveryZipCode,
+            DeliveryDate: entry.DeliveryDate
+        }));
+          const response = await fetch(`http://localhost:3000/addFuelHistory`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              GallonsRequested: entry.GallonsRequested,
+              FuelType: entry.FuelType,
+              TotalAmountDue: entry.TotalAmountDue,
+              DeliveryAddress: entry.DeliveryAddress,
+              DeliveryCity: entry.DeliveryCity,
+              DeliveryState: entry.DeliveryState,
+              DeliveryZipCode: entry.DeliveryZipCode,
+              DeliveryDate: entry.DeliveryDate
+            }),
+            credentials: 'include'
+          });
+          const data = await response.json();
+          console.log(data);
         } catch (error) {
-            console.error('Error adding history entry:', error);
+          console.error('Error adding history entry:', error);
         }
-    }
+      }
 
     static async getHistory(username) {
         try {

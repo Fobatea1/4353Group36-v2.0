@@ -17,6 +17,7 @@ const corsOptions = {
     credentials: true,
 };
 
+app.use(express.json());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -70,17 +71,19 @@ app.post('/login', (req, res) => {
                 }
                 if (isMatch) {
                     const token = jwt.sign({ userID: results[0].UserID }, secretKey, { expiresIn: '1h' });
-                    res.cookie('token', token, { httpOnly: true });
-                    res.json({ message: 'Login successful' });
+                    res.cookie('token', token, { sameSite: 'Lax' }); // 'HttpOnly' flag removed
+                    res.json({ message: 'Login successful', token: token, userID: results[0].UserID });
                 } else {
-                    res.json({ message: 'Invalid username or password' });
+                    res.status(401).json({ message: 'Invalid username or password' });
                 }
             });
         } else {
-            res.json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Invalid username or password' });
         }
     });
 });
+
+
 
 app.get('/userInfo/:username', (req, res) => {
     const username = req.params.username;
@@ -126,17 +129,82 @@ app.get('/allUsers', (req, res) => {
 });
 
 app.post('/addFuelHistory', (req, res) => {
-    const token = req.cookies.token;
+    console.log("Raw request body:", req.body);
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header is missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
     try {
         const decoded = jwt.verify(token, secretKey);
-        const userID = decoded.userID;
+        const UserID = decoded.userID;
+        
+        console.log("Token decoded successfully. User ID:", UserID);
+
         const { GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
-        const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, Fuel Type, Total AmountDue, DeliveryAddress, DeliveryCity, Delivery State, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(sql, [userID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate], (err, result) => {
+        
+        console.log("Received at addFuelHistory:", req.body);
+        console.log("Extracted Data:", {
+            GallonsRequested,
+            FuelType,
+            TotalAmountDue,
+            DeliveryAddress,
+            DeliveryCity,
+            DeliveryState,
+            DeliveryZipCode,
+            DeliveryDate
+        });
+
+        if (!UserID) {
+            console.error("Error: userID is undefined.");
+            return res.status(400).json({ message: "userID is missing or invalid" });
+        }
+
+        const sql = `INSERT INTO FuelHistory (
+            UserID, 
+            GallonsRequested, 
+            FuelType, 
+            TotalAmountDue, 
+            DeliveryAddress, 
+            DeliveryCity, 
+            DeliveryState, 
+            DeliveryZipCode, 
+            DeliveryDate
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(sql, [
+            UserID, 
+            GallonsRequested, 
+            FuelType, 
+            TotalAmountDue, 
+            DeliveryAddress, 
+            DeliveryCity, 
+            DeliveryState, 
+            DeliveryZipCode, 
+            DeliveryDate
+        ], (err, result) => {
             if (err) {
-                console.error('Error adding fuel history:', err);
+                console.error('SQL Error:', err);
+                console.error('SQL Query:', sql);
+                console.error('Values used in query:', {
+                    UserID, 
+                    GallonsRequested, 
+                    FuelType, 
+                    TotalAmountDue, 
+                    DeliveryAddress, 
+                    DeliveryCity, 
+                    DeliveryState, 
+                    DeliveryZipCode, 
+                    DeliveryDate
+                });
                 return res.status(500).json({ message: 'Error adding fuel history' });
             }
+            console.log('Insertion successful, result:', result);
             res.json({ message: 'Fuel history added successfully' });
         });
     } catch (err) {
@@ -144,6 +212,7 @@ app.post('/addFuelHistory', (req, res) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 });
+
 
 app.get('/getFuelHistory/:username', (req, res) => {
     const username = req.params.username;

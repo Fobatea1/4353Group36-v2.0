@@ -26,7 +26,7 @@ btnRegisterPopup.addEventListener('click', ()=> {
   });
 
 
-function loginUser(event) {
+  function loginUser(event) {
     event.preventDefault();
     const loginButton = document.getElementById('loginButton');
     loginButton.disabled = true;
@@ -39,16 +39,12 @@ function loginUser(event) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok. Status: ' + response.status);
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.message === 'Login successful') {
+            console.log('Token received:', data.token); // Console log for debugging
+            sessionStorage.setItem('token', data.token);
             sessionStorage.setItem('username', username);
-            sessionStorage.setItem('userType', data.userType);
             window.location.href = 'Success.html?username=' + encodeURIComponent(username);
         } else {
             alert(data.message);
@@ -62,6 +58,7 @@ function loginUser(event) {
         loginButton.disabled = false;
     });
 }
+
 
 function registerUser() {
     const username = document.getElementById('registerUsername').value;

@@ -53,7 +53,7 @@
                         requestNumberCell.textContent = index + 1;
                         newRow.appendChild(requestNumberCell);
 
-                        ['gallonsRequested', 'fuelType', 'totalAmountDue', 'deliveryAddress', 'deliveryDate'].forEach(key => {
+                        ['GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryDate'].forEach(key => {
                             const td = document.createElement('td');
                             td.textContent = entry[key];
                             newRow.appendChild(td);
