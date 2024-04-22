@@ -37,7 +37,7 @@
                     const tbody = document.createElement('tbody');
 
                     const headRow = document.createElement('tr');
-                    ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
+                    ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date', 'Delivery State', 'City', 'Zipcode'].forEach(heading => {
                         const th = document.createElement('th');
                         th.textContent = heading;
                         headRow.appendChild(th);
@@ -53,7 +53,7 @@
                         requestNumberCell.textContent = index + 1;
                         newRow.appendChild(requestNumberCell);
 
-                        ['GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryDate'].forEach(key => {
+                        ['GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryDate', 'DeliveryState', 'City', 'Zipcode'].forEach(key => {
                             const td = document.createElement('td');
                             if (key === 'TotalAmountDue') {
                                 td.textContent = `$${entry[key]}`;
