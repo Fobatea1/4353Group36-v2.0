@@ -16,44 +16,46 @@
             <a href="#">Quaso</a>
         </nav>
     </header>
-    <br><br><br><br>
     <div class="historyWrapper">
         <h2>Request Fuel Quota</h2>
-        <br>
         <form id="fuelQuotaForm">
             <label for="GallonsRequested">How many Gallons do you need:</label>
             <input type="number" id="GallonsRequested" name="GallonsRequested" required><br><br>
 
-            <label for="FuelType">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspFuel Type:</label>
+            <label for="FuelType">Fuel Type:</label>
             <select id="FuelType" name="FuelType" required>
                 <option value="0.56">Regular - $0.56/gallon</option>
                 <option value="1.34">Diesel - $1.34/gallon</option>
                 <option value="3.89">Premium - $3.89/gallon</option>
             </select><br><br>
 
-            <label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTotal Amount Due: </label>
+            <label>Total Amount Due: </label>
             <span id="TotalAmountDue">$0.00</span><br><br>
 
-            <label for="DeliveryAddress">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDelivery Address:</label>
-            <input type="text" id="DeliveryAddress" name="DeliveryAddress" readonly><br><br>
+            <label for="DeliveryState">Delivery State:</label>
+            <input type="text" id="DeliveryState" name="DeliveryState"><br>
+            <button type="button" onclick="changeField('DeliveryState')">Change State</button><br><br>
 
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            <button type="button" id="changeAddressBtn" class = "btn">Change address</button><br><br>
+            <label for="DeliveryCity">Delivery City:</label>
+            <input type="text" id="DeliveryCity" name="DeliveryCity"><br>
+            <button type="button" onclick="changeField('DeliveryCity')">Change City</button><br><br>
+
+            <label for="DeliveryZipCode">Delivery Zipcode:</label>
+            <input type="text" id="DeliveryZipCode" name="DeliveryZipCode"><br>
+            <button type="button" onclick="changeField('DeliveryZipCode')">Change Zipcode</button><br><br>
+
+            <label for="DeliveryAddress">Delivery Address:</label>
+            <input type="text" id="DeliveryAddress" name="DeliveryAddress"><br>
+            <button type="button" id="changeAddressBtn" class="btn">Change Address</button><br><br>
 
             <div id="newAddressContainer" style="display:none;">
-                <label for="newAddress">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                    Input new address:</label>
                 <input type="text" id="newAddress" name="newAddress"><br>
-                
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            
-                <button type="button" id="confirmAddressBtn" class = "btn">Confirm New Address</button><br><br>
+                <button type="button" id="confirmAddressBtn" class="btn">Confirm New Address</button><br><br>
             </div>
 
-            <label for="DeliveryDate">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspRequest Delivery Date:</label>
+            <label for="DeliveryDate">Request Delivery Date:</label>
             <input type="date" id="DeliveryDate" name="DeliveryDate" required><br><br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            <button type="submit" id="completeInfoBtn" class = "btn">Complete Info</button>
+            <button type="submit" id="completeInfoBtn" class="btn">Complete Info</button>
         </form>
         <div id="postSubmissionOptions" style="display:none;">
             <button onclick="window.location.href='Profile.html'" class="btn">View Profile</button>
@@ -65,68 +67,68 @@
         document.getElementById('changeAddressBtn').addEventListener('click', function() {
             document.getElementById('newAddressContainer').style.display = 'block';
         });
-        
+
         document.getElementById('confirmAddressBtn').addEventListener('click', function() {
             var newAddress = document.getElementById('newAddress').value;
             if(newAddress) {
-                document.getElementById('deliveryAddress').value = newAddress;
+                document.getElementById('DeliveryAddress').value = newAddress;
                 document.getElementById('newAddressContainer').style.display = 'none';
             } else {
                 alert('Please enter a new address.');
             }
         });
-        
-        function calculateTotalAmount() {
-            const gallons = document.getElementById('GallonsRequested').value;
-            const pricePerGallon = document.getElementById('FuelType').value;
-            const totalAmount = gallons * pricePerGallon;
-            document.getElementById('TotalAmountDue').innerText = `$${totalAmount.toFixed(2)}`;
+
+        function changeField(fieldId) {
+            const input = document.getElementById(fieldId);
+            input.readOnly = false;
+            input.focus();
         }
-        
+
+        function calculateTotalAmount() {
+            const gallons = parseInt(document.getElementById('GallonsRequested').value, 10);
+            const pricePerGallon = parseFloat(document.getElementById('FuelType').value);
+            const totalAmount = gallons * pricePerGallon;
+            document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
+        }
+
         document.getElementById('GallonsRequested').addEventListener('input', calculateTotalAmount);
         document.getElementById('FuelType').addEventListener('change', calculateTotalAmount);
-        
+
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
-        
-            const GallonsRequested = document.getElementById('GallonsRequested').value;
-            const DeliveryAddress = document.getElementById('DeliveryAddress').value || document.getElementById('newAddress').value;
-            const DeliveryDate = document.getElementById('DeliveryDate').value;
-            const FuelType = document.getElementById('FuelType').options[document.getElementById('FuelType').selectedIndex].text;
-            const TotalAmountDue = document.getElementById('TotalAmountDue').innerText;
-            const token = sessionStorage.getItem('token'); // Retrieve the token from sessionStorage
-        
             const fuelRequestData = {
-                GallonsRequested,
-                DeliveryAddress,
-                DeliveryDate,
-                FuelType,
-                TotalAmountDue,
-                token  // Add the token to your fuelRequestData
+                GallonsRequested: document.getElementById('GallonsRequested').value,
+                FuelType: document.getElementById('FuelType').options[document.getElementById('FuelType').selectedIndex].text,
+                TotalAmountDue: document.getElementById('TotalAmountDue').textContent,
+                DeliveryState: document.getElementById('DeliveryState').value,
+                DeliveryCity: document.getElementById('DeliveryCity').value,
+                DeliveryZipCode: document.getElementById('DeliveryZipCode').value,
+                DeliveryAddress: document.getElementById('DeliveryAddress').value,
+                DeliveryDate: document.getElementById('DeliveryDate').value
             };
-        
-            HistoryManager.addEntry(fuelRequestData); // Pass the token along with the request data
-        
-            document.getElementById('postSubmissionOptions').style.display = 'block';
+            console.log('Fuel request data before sending:', fuelRequestData);
+            HistoryManager.addEntry(fuelRequestData).then(() => {
+                document.getElementById('postSubmissionOptions').style.display = 'block';
+            }).catch(error => {
+                console.error('Error adding history entry:', error);
+            });
         });
-        
-        async function populateDeliveryAddress() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                try {
-                    const response = await fetch(`http://localhost:3000/userInfo/${username}`);
-                    const userInfo = await response.json();
-                    if(userInfo.address) {
-                        document.getElementById('deliveryAddress').value = userInfo.address;
-                        calculateTotalAmount();
-                    }
-                } catch (error) {
-                    console.error('Error fetching user info:', error);
+        window.onload = async function() {
+            try {
+                const username = sessionStorage.getItem('username');
+                const response = await fetch(`http://localhost:3000/userInfo/${username}`);
+                const userInfo = await response.json();
+                if(userInfo.address) {
+                    document.getElementById('DeliveryAddress').value = userInfo.address;
+                    document.getElementById('DeliveryState').value = userInfo.state;
+                    document.getElementById('DeliveryCity').value = userInfo.city;
+                    document.getElementById('DeliveryZipCode').value = userInfo.zipcode;
+                    calculateTotalAmount();
                 }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
             }
-        }
-        
-        window.onload = populateDeliveryAddress;
-        </script>
+        };
+    </script>
 </body>
 </html>
