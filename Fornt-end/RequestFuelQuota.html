@@ -32,26 +32,69 @@
             <label>Total Amount Due: </label>
             <span id="TotalAmountDue">$0.00</span><br><br>
 
-            <label for="DeliveryState">Delivery State:</label>
-            <input type="text" id="DeliveryState" name="DeliveryState"><br>
-            <button type="button" onclick="changeField('DeliveryState')">Change State</button><br><br>
+            <label for="DeliveryAddress">Delivery Address:</label>
+            <input type="text" id="DeliveryAddress" name="DeliveryAddress" required><br><br>
 
             <label for="DeliveryCity">Delivery City:</label>
-            <input type="text" id="DeliveryCity" name="DeliveryCity"><br>
-            <button type="button" onclick="changeField('DeliveryCity')">Change City</button><br><br>
+            <input type="text" id="DeliveryCity" name="DeliveryCity" required><br><br>
 
-            <label for="DeliveryZipCode">Delivery Zipcode:</label>
-            <input type="text" id="DeliveryZipCode" name="DeliveryZipCode"><br>
-            <button type="button" onclick="changeField('DeliveryZipCode')">Change Zipcode</button><br><br>
+            <label for="DeliveryState">Delivery State:</label>
+            <select id="DeliveryState" name="DeliveryState" required>
+                <option value="">Please select a state</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+            </select><br><br>
 
-            <label for="DeliveryAddress">Delivery Address:</label>
-            <input type="text" id="DeliveryAddress" name="DeliveryAddress"><br>
-            <button type="button" id="changeAddressBtn" class="btn">Change Address</button><br><br>
-
-            <div id="newAddressContainer" style="display:none;">
-                <input type="text" id="newAddress" name="newAddress"><br>
-                <button type="button" id="confirmAddressBtn" class="btn">Confirm New Address</button><br><br>
-            </div>
+            <label for="DeliveryZipCode">Delivery ZIP Code:</label>
+            <input type="text" id="DeliveryZipCode" name="DeliveryZipCode" required><br><br>
 
             <label for="DeliveryDate">Request Delivery Date:</label>
             <input type="date" id="DeliveryDate" name="DeliveryDate" required><br><br>
@@ -64,31 +107,15 @@
     </div>
 
     <script>
-        document.getElementById('changeAddressBtn').addEventListener('click', function() {
-            document.getElementById('newAddressContainer').style.display = 'block';
-        });
-
-        document.getElementById('confirmAddressBtn').addEventListener('click', function() {
-            var newAddress = document.getElementById('newAddress').value;
-            if(newAddress) {
-                document.getElementById('DeliveryAddress').value = newAddress;
-                document.getElementById('newAddressContainer').style.display = 'none';
-            } else {
-                alert('Please enter a new address.');
-            }
-        });
-
-        function changeField(fieldId) {
-            const input = document.getElementById(fieldId);
-            input.readOnly = false;
-            input.focus();
-        }
-
         function calculateTotalAmount() {
-            const gallons = parseInt(document.getElementById('GallonsRequested').value, 10);
+            const gallons = parseFloat(document.getElementById('GallonsRequested').value);
             const pricePerGallon = parseFloat(document.getElementById('FuelType').value);
-            const totalAmount = gallons * pricePerGallon;
-            document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
+            if (!isNaN(gallons) && !isNaN(pricePerGallon)) {
+                const totalAmount = gallons * pricePerGallon;
+                document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
+            } else {
+                document.getElementById('TotalAmountDue').textContent = `$0.00`;
+            }
         }
 
         document.getElementById('GallonsRequested').addEventListener('input', calculateTotalAmount);
@@ -113,16 +140,20 @@
                 console.error('Error adding history entry:', error);
             });
         });
+
         window.onload = async function() {
+            console.log("Page loaded, fetching user info.");
             try {
                 const username = sessionStorage.getItem('username');
+                console.log(`Attempting to fetch info for username: ${username}`);
                 const response = await fetch(`http://localhost:3000/userInfo/${username}`);
                 const userInfo = await response.json();
-                if(userInfo.address) {
-                    document.getElementById('DeliveryAddress').value = userInfo.address;
-                    document.getElementById('DeliveryState').value = userInfo.state;
-                    document.getElementById('DeliveryCity').value = userInfo.city;
-                    document.getElementById('DeliveryZipCode').value = userInfo.zipcode;
+                console.log("Received userInfo:", userInfo);
+                if(userInfo.Address) {
+                    document.getElementById('DeliveryAddress').value = userInfo.Address;
+                    document.getElementById('DeliveryCity').value = userInfo.City;
+                    document.getElementById('DeliveryState').value = userInfo.State;
+                    document.getElementById('DeliveryZipCode').value = userInfo.ZipCode;
                     calculateTotalAmount();
                 }
             } catch (error) {
