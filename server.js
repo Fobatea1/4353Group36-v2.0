@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -18,8 +17,8 @@ const corsOptions = {
 };
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
 app.use(cookieParser());
 
 const db = mysql.createConnection({
@@ -71,7 +70,10 @@ app.post('/login', (req, res) => {
                 }
                 if (isMatch) {
                     const token = jwt.sign({ userID: results[0].UserID }, secretKey, { expiresIn: '1h' });
-                    res.cookie('token', token, { sameSite: 'Lax' }); // 'HttpOnly' flag removed
+                    res.cookie('token', token, {
+                        httpOnly: true,
+                        sameSite: 'Lax'
+                    });
                     res.json({ message: 'Login successful', token: token, userID: results[0].UserID });
                 } else {
                     res.status(401).json({ message: 'Invalid username or password' });
@@ -87,7 +89,7 @@ app.post('/login', (req, res) => {
 
 app.get('/userInfo/:username', (req, res) => {
     const username = req.params.username;
-    const sql = 'SELECT Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
+    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error fetching user info:', err);
@@ -96,10 +98,12 @@ app.get('/userInfo/:username', (req, res) => {
         if (results.length > 0) {
             let user = results[0];
             res.json({
-                address: user.Address,
-                city: user.City,
-                state: user.State,
-                zipCode: user.ZipCode
+                FirstName: user.FirstName,
+                LastName: user.LastName,
+                Address: user.Address,
+                City: user.City,
+                State: user.State,
+                ZipCode: user.ZipCode
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -108,10 +112,11 @@ app.get('/userInfo/:username', (req, res) => {
 });
 
 app.put('/userInfo/:username', (req, res) => {
-    const { firstName, lastName, address, city, state, zipCode } = req.body;
+    const { FirstName, LastName, Address, City, State, ZipCode } = req.body;
+    console.log('Received update for:', req.params.username, req.body);  // Log incoming data
     const username = req.params.username;
     const sql = 'UPDATE UserAccounts SET FirstName = ?, LastName = ?, Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
-    db.query(sql, [firstName, lastName, address, city, state, zipCode, username], (err, result) => {
+    db.query(sql, [FirstName, LastName, Address, City, State, ZipCode, username], (err, result) => {
         if (err) {
             console.error('Error updating user info:', err);
             return res.status(500).json({ message: 'Error updating user information' });
