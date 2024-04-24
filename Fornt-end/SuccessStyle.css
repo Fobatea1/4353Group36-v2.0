@@ -174,9 +174,7 @@ header {
 }
 
 select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+
     padding: 0.5em;
     border: 1px solid #ccc;
     border-radius: 5px;
