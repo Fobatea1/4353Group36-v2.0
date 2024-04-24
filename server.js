@@ -89,7 +89,7 @@ app.post('/login', (req, res) => {
 
 app.get('/userInfo/:username', (req, res) => {
     const username = req.params.username;
-    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode FROM UserAccounts WHERE Username = ?';
+    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode, AccountType FROM UserAccounts WHERE Username = ?';
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error fetching user info:', err);
@@ -103,7 +103,8 @@ app.get('/userInfo/:username', (req, res) => {
                 Address: user.Address,
                 City: user.City,
                 State: user.State,
-                ZipCode: user.ZipCode
+                ZipCode: user.ZipCode,
+                AccountType: user.AccountType  
             });
         } else {
             res.status(404).json({ message: 'User not found' });
