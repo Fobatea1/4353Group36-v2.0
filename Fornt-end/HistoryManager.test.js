@@ -27,7 +27,7 @@ describe('History Management', () => {
         jest.clearAllMocks();
     });
 
-    it('adds and retrieves history correctly', () => {
+    it('adds and retrieves history correctly', async () => {
         const entry = { date: '2021-01-01', amount: 100 };
         historyManager.addEntry(entry);
 
@@ -40,7 +40,7 @@ describe('History Management', () => {
         expect(history).toEqual([entry]);
     });
 
-    it('clears history for the current user', () => {
+    it('clears history for the current user', async () => {
         historyManager.addEntry({ date: '2021-01-01', amount: 100 });
         historyManager.clearHistory();
 
@@ -48,14 +48,29 @@ describe('History Management', () => {
         expect(historyManager.getHistory()).toEqual([]);
     });
 
-    it('initializes with default storage and session when not provided', () => {
+    it('initializes with default storage and session when not provided', async () => {
         // This test is somewhat conceptual in a Node environment, as it's meant to ensure
         // that the constructor works with defaults, even though we can't use window.localStorage/sessionStorage directly here.
         expect(() => new HistoryManager()).not.toThrow();
     });
 
-    it('handles missing history correctly', () => {
+    it('handles missing history correctly', async () => {
         const history = historyManager.getHistory();
         expect(history).toEqual([]);
+    });
+
+    it('tests addEntry error handling', async () => {
+        mockSession.getItem.mockReturnValueOnce(null); // Simulate user not logged in
+        await expect(historyManager.addEntry({})).rejects.toThrow('Error adding history entry:');
+    });
+
+    it('tests getHistory error handling', async () => {
+        mockSession.getItem.mockReturnValueOnce(null); // Simulate user not logged in
+        await expect(historyManager.getHistory()).rejects.toThrow('Error retrieving history:');
+    });
+
+    it('tests clearHistory error handling', async () => {
+        mockSession.getItem.mockReturnValueOnce(null); // Simulate user not logged in
+        await expect(historyManager.clearHistory()).rejects.toThrow('Error clearing history:');
     });
 });
