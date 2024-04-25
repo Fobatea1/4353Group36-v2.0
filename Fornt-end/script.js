@@ -64,7 +64,13 @@ function registerUser() {
     const username = document.getElementById('registerUsername').value;
     const password = document.getElementById('registerPassword').value;
     const userType = document.querySelector('input[name="userType"]:checked').value;
+    const termsCheckbox = document.getElementById('termsCheckbox');
 
+    if (!termsCheckbox.checked) {
+        alert('Please agree to the terms & conditions.');
+        return;
+    }
+    
     if (username === '' || password === '') {
         alert('Invalid Username or Password.');
         return;

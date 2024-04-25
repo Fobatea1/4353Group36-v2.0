@@ -126,42 +126,59 @@
             }
         }
 
-        function saveUserInfo() {
-            const username = sessionStorage.getItem('username');
-            console.log('Saving info for:', username);  // Ensure username is correct here too
-            if (!username) {
-                alert("No username found. Please log in again.");
-                return;
-            }
-
-            const userInfo = {
-                FirstName: document.getElementById('FirstName').value,
-                LastName: document.getElementById('LastName').value,
-                Address: document.getElementById('Address').value,
-                City: document.getElementById('City').value,
-                State: document.getElementById('State').value,
-                ZipCode: document.getElementById('ZipCode').value
-            };
-
-            console.log('UserInfo:', userInfo);  // Log what's being sent to the server
-
-            fetch(`http://localhost:3000/userInfo/${username}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userInfo)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || 'Information updated successfully');
-                window.location.href = 'Profile.html'; // Redirect to Profile page
-            })
-            .catch(error => {
-                console.error('Failed to update user info:', error);
-                alert('Error updating information.');
-            });
+    function saveUserInfo() {
+        const username = sessionStorage.getItem('username');
+        console.log('Saving info for:', username);  // Ensure username is correct here too
+        if (!username) {
+            alert("No username found. Please log in again.");
+            return;
         }
+        
+        const firstName = document.getElementById('FirstName').value;
+        const lastName = document.getElementById('LastName').value;
+        const address = document.getElementById('Address').value;
+        const city = document.getElementById('City').value;
+        const state = document.getElementById('State').value;
+        const zipCode = document.getElementById('ZipCode').value;
+
+        if (firstName === '' || lastName === '' || address === '' || city === '' || state === '' || zipCode === '') {
+            alert('Please fill out all fields.');
+        return;
+    }
+
+        const userInfo = {
+            FirstName: firstName,
+            LastName: lastName,
+            Address: address,
+            City: city,
+            State: state,
+            ZipCode: zipCode
+        };
+
+        console.log('UserInfo:', userInfo);  // Log what's being sent to the server
+
+        fetch(`http://localhost:3000/userInfo/${username}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userInfo)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update user info');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || 'Information updated successfully');
+            window.location.href = 'Profile.html'; // Redirect to Profile page only on success
+        })
+        .catch(error => {
+            console.error('Failed to update user info:', error);
+            alert('Error updating information.');
+        });
+}
     </script>
 </body>
 </html>
