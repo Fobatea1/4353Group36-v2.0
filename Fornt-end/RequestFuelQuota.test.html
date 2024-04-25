@@ -29,21 +29,46 @@ describe('Request Fuel Quota Page', () => {
 
     test('Submitting fuel request form sends data', () => {
         // Simulate filling out the form
-        const fuelTypeInput = document.getElementById('fuelType');
+        const fuelTypeInput = document.getElementById('FuelType');
         fuelTypeInput.value = 'Diesel';
 
-        const quantityInput = document.getElementById('quantity');
-        quantityInput.value = '50';
+        const gallonsRequestedInput = document.getElementById('GallonsRequested');
+        gallonsRequestedInput.value = '50';
 
         // Simulate form submission
-        const form = document.getElementById('fuelRequestForm');
+        const form = document.getElementById('fuelQuotaForm');
         form.dispatchEvent(new Event('submit'));
 
         // Assert fetch was called with correct data
-        expect(window.fetch).toHaveBeenCalledWith('/api/fuel/request', {
+        expect(window.fetch).toHaveBeenCalledWith('http://localhost:3000/fuel-request', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fuelType: 'Diesel', quantity: 50 })
+            body: JSON.stringify({
+                GallonsRequested: '50',
+                FuelType: 'Diesel',
+                TotalAmountDue: '$67.00', // Assuming Diesel price is $1.34/gallon
+                DeliveryState: '',
+                DeliveryCity: '',
+                DeliveryZipCode: '',
+                DeliveryAddress: '',
+                DeliveryDate: ''
+            })
         });
+    });
+
+    test('calculateTotalAmount updates total amount due', () => {
+        // Simulate filling out the form
+        const gallonsRequestedInput = document.getElementById('GallonsRequested');
+        gallonsRequestedInput.value = '50';
+
+        const fuelTypeSelect = document.getElementById('FuelType');
+        fuelTypeSelect.value = '1.34'; // Diesel price
+
+        // Trigger the input event to calculate total amount
+        gallonsRequestedInput.dispatchEvent(new Event('input'));
+
+        // Check if total amount due is updated
+        const totalAmountDue = document.getElementById('TotalAmountDue');
+        expect(totalAmountDue.textContent).toBe('$67.00'); // 50 gallons * $1.34/gallon
     });
 });
