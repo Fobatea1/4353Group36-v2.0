@@ -56,7 +56,9 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+
     const sql = 'SELECT UserID, Password FROM UserAccounts WHERE Username = ?';
+
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
@@ -84,6 +86,7 @@ app.post('/login', (req, res) => {
         }
     });
 });
+
 
 
 
@@ -126,7 +129,9 @@ app.put('/userInfo/:username', (req, res) => {
             res.json({ message: 'User information updated successfully' });
         } else {
             res.status(404).json({ message: 'User not found' });
+
         }
+        res.json(results);
     });
 });
 
@@ -216,6 +221,20 @@ app.delete('/clearFuelHistory/:username', (req, res) => {
             return res.status(500).json({ message: 'Error clearing fuel history' });
         }
         res.json({ message: 'Fuel history cleared successfully' });
+    });
+});
+
+app.post('/addFuelRequest', (req, res) => {
+    const { userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryCity, deliveryState, deliveryZipCode, deliveryDate } = req.body;
+
+    const sql = 'INSERT INTO FuelHistory (UserID, GallonsRequested, FuelType, TotalAmountDue, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    
+    db.query(sql, [userID, gallonsRequested, fuelType, totalAmountDue, deliveryAddress, deliveryCity, deliveryState, deliveryZipCode, deliveryDate], (err, result) => {
+        if (err) {
+            console.error('Error adding fuel request:', err);
+            return res.status(500).json({ message: 'Error adding fuel request' });
+        }
+        res.json({ message: 'Fuel request added successfully' });
     });
 });
 
