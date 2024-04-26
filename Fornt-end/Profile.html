@@ -12,7 +12,7 @@
             <a href="Profile.html">Profile</a>
             <a href="#">Services</a>
             <a href="#">Quaso</a>
-            <h2 class="userGreeting">Welcome, <span id="userGreeting">User</span>!</h2>
+            <h2 class="userGreeting"><span id="userGreeting">Welcome, User!</span></h2>
         </nav>
     </header>
     
@@ -47,7 +47,9 @@
                                 <p>State: ${userInfo.State || ''}</p>
                                 <p>Zipcode: ${userInfo.ZipCode || ''}</p>
                             `;
-                            document.getElementById('userGreeting').textContent = `Welcome, ${username}`;
+                            document.getElementById('userGreeting').textContent = `Welcome, ${username}!`;
+                            sessionStorage.setItem('userType', userInfo.AccountType); // Save AccountType in sessionStorage
+                            displayAdminButtonIfNeeded();  // Ensure this is called after the userType is set
                         } else {
                             document.getElementById('displayInfo').innerHTML = "<p>No information found.</p>";
                         }
@@ -59,7 +61,6 @@
             } else {
                 document.getElementById('displayInfo').innerHTML = "<p>Please log in to view information.</p>";
             }
-            displayAdminButtonIfNeeded();
         });
 
         function displayAdminButtonIfNeeded() {

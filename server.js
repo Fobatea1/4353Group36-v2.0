@@ -1,15 +1,25 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+const secretKey = 'your_secret_key';
 
-app.use(cors());
-app.use(bodyParser.json());
+const corsOptions = {
+    origin: 'http://127.0.0.1:5502', // Adjust if necessary
+    optionsSuccessStatus: 200,
+    credentials: true,
+};
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use(cors(corsOptions));
+app.use(cookieParser());
 
 const db = mysql.createConnection({
     host: '127.0.0.1',
@@ -46,7 +56,9 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    const sql = 'SELECT UserID, Password, AccountType FROM UserAccounts WHERE Username = ?';
+
+    const sql = 'SELECT UserID, Password FROM UserAccounts WHERE Username = ?';
+
     db.query(sql, [username], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
@@ -59,23 +71,65 @@ app.post('/login', (req, res) => {
                     return res.status(500).json({ message: 'Login failed' });
                 }
                 if (isMatch) {
-                    res.json({ message: 'Login successful', userType: results[0].AccountType });
+                    const token = jwt.sign({ userID: results[0].UserID }, secretKey, { expiresIn: '1h' });
+                    res.cookie('token', token, {
+                        httpOnly: true,
+                        sameSite: 'Lax'
+                    });
+                    res.json({ message: 'Login successful', token: token, userID: results[0].UserID });
                 } else {
-                    res.json({ message: 'Invalid username or password' });
+                    res.status(401).json({ message: 'Invalid username or password' });
                 }
             });
         } else {
-            res.json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Invalid username or password' });
         }
     });
 });
 
-app.get('/users', (req, res) => {
-    const sql = 'SELECT Username, AccountType FROM UserAccounts';
-    db.query(sql, (err, results) => {
+
+
+
+app.get('/userInfo/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'SELECT FirstName, LastName, Address, City, State, ZipCode, AccountType FROM UserAccounts WHERE Username = ?';
+    db.query(sql, [username], (err, results) => {
         if (err) {
-            console.error('Error fetching users:', err);
-            return res.status(500).json({ message: 'Error fetching users' });
+            console.error('Error fetching user info:', err);
+            return res.status(500).json({ message: 'Error fetching user information' });
+        }
+        if (results.length > 0) {
+            let user = results[0];
+            res.json({
+                FirstName: user.FirstName,
+                LastName: user.LastName,
+                Address: user.Address,
+                City: user.City,
+                State: user.State,
+                ZipCode: user.ZipCode,
+                AccountType: user.AccountType  
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    });
+});
+
+app.put('/userInfo/:username', (req, res) => {
+    const { FirstName, LastName, Address, City, State, ZipCode } = req.body;
+    console.log('Received update for:', req.params.username, req.body);  // Log incoming data
+    const username = req.params.username;
+    const sql = 'UPDATE UserAccounts SET FirstName = ?, LastName = ?, Address = ?, City = ?, State = ?, ZipCode = ? WHERE Username = ?';
+    db.query(sql, [FirstName, LastName, Address, City, State, ZipCode, username], (err, result) => {
+        if (err) {
+            console.error('Error updating user info:', err);
+            return res.status(500).json({ message: 'Error updating user information' });
+        }
+        if (result.affectedRows > 0) {
+            res.json({ message: 'User information updated successfully' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+
         }
         res.json(results);
     });
@@ -85,10 +139,88 @@ app.get('/allUsers', (req, res) => {
     db.query('SELECT Username, AccountType FROM UserAccounts', (err, results) => {
         if (err) {
             console.error('Error fetching all users:', err);
-            res.status(500).send('Error fetching all users');
-        } else {
-            res.json(results);
+            return res.status(500).json({ message: 'Error fetching all users' });
         }
+        res.json(results);
+    });
+});
+
+app.post('/addFuelHistory', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header is missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        const UserID = decoded.userID;
+
+        // Assuming FuelType comes in the format "Type - $Price/gallon"
+        const { GallonsRequested, FuelType, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
+        const pricePerGallon = parseFloat(FuelType.split(' - $')[1].split('/gallon')[0]);
+        const TotalAmountDue = GallonsRequested * pricePerGallon;
+
+        const sql = `INSERT INTO FuelHistory (
+            UserID, 
+            GallonsRequested, 
+            FuelType, 
+            TotalAmountDue, 
+            DeliveryAddress, 
+            DeliveryCity, 
+            DeliveryState, 
+            DeliveryZipCode, 
+            DeliveryDate
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(sql, [
+            UserID, 
+            GallonsRequested, 
+            FuelType.split(' - ')[0], // Assuming we only want to store the fuel type without price
+            TotalAmountDue.toFixed(2), // Ensure it's a string with 2 decimal places
+            DeliveryAddress, 
+            DeliveryCity, 
+            DeliveryState, 
+            DeliveryZipCode, 
+            DeliveryDate
+        ], (err, result) => {
+            if (err) {
+                console.error('Error adding fuel history:', err);
+                return res.status(500).json({ message: 'Error adding fuel history' });
+            }
+            res.json({ message: 'Fuel history added successfully' });
+        });
+    } catch (err) {
+        console.error('Token verification failed:', err);
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+});
+
+app.get('/getFuelHistory/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'SELECT * FROM FuelHistory JOIN UserAccounts ON FuelHistory.UserID = UserAccounts.UserID WHERE UserAccounts.Username = ?';
+    db.query(sql, [username], (err, results) => {
+        if (err) {
+            console.error('Error fetching fuel history:', err);
+            return res.status(500).json({ message: 'Error fetching fuel history' });
+        }
+        res.json(results);
+    });
+});
+
+app.delete('/clearFuelHistory/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'DELETE FROM FuelHistory WHERE UserID = (SELECT UserID FROM UserAccounts WHERE Username = ?)';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            console.error('Error clearing fuel history:', err);
+            return res.status(500).json({ message: 'Error clearing fuel history' });
+        }
+        res.json({ message: 'Fuel history cleared successfully' });
     });
 });
 

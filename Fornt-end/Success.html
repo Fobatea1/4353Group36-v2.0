@@ -21,23 +21,23 @@
             <h2>Please enter or update your details:</h2>
             <form id="userForm">
                 <div class="input-box">
-                    <input type="text" id="firstName" maxlength="50" required>
+                    <input type="text" id="FirstName" maxlength="50" required>
                     <label>First Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="lastName" maxlength="50" required>
+                    <input type="text" id="LastName" maxlength="50" required>
                     <label>Last Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="address" maxlength="100" required>
+                    <input type="text" id="Address" maxlength="100" required>
                     <label>Address</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="city" maxlength="100" required>
+                    <input type="text" id="City" maxlength="100" required>
                     <label>City</label>
                 </div>
                 <div class="input-box">
-                    <select id="state" name="state" required>
+                    <select id="State" name="State" required>
                         <option value="">Select State</option>
                         <option value="AL">Alabama</option>
                         <option value="AK">Alaska</option>
@@ -92,8 +92,8 @@
                     </select>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="zipcode" minLength="5" maxLength="9" required>
-                    <label>Zipcode</label>
+                    <input type="text" id="ZipCode" minLength="5" maxLength="9" required>
+                    <label>ZIP Code</label>
                 </div>
                 <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>
@@ -109,16 +109,18 @@
 
         function populateUserInfo() {
             const username = sessionStorage.getItem('username');
+            console.log('Username:', username);  // Check if username is retrieved correctly.
             if (username) {
                 fetch(`http://localhost:3000/userInfo/${username}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('firstName').value = data.FirstName || '';
-                    document.getElementById('lastName').value = data.LastName || '';
-                    document.getElementById('address').value = data.Address || '';
-                    document.getElementById('city').value = data.City || '';
-                    document.getElementById('state').value = data.State || '';
-                    document.getElementById('zipcode').value = data.ZipCode || '';
+                    console.log('Data:', data);  // Log the data to see what you receive.
+                    document.getElementById('FirstName').value = data.FirstName || '';
+                    document.getElementById('LastName').value = data.LastName || '';
+                    document.getElementById('Address').value = data.Address || '';
+                    document.getElementById('City').value = data.City || '';
+                    document.getElementById('State').value = data.State || '';
+                    document.getElementById('ZipCode').value = data.ZipCode || '';
                 })
                 .catch(error => console.error('Error loading user info:', error));
             }
@@ -126,19 +128,22 @@
 
         function saveUserInfo() {
             const username = sessionStorage.getItem('username');
+            console.log('Saving info for:', username);  // Ensure username is correct here too
             if (!username) {
                 alert("No username found. Please log in again.");
                 return;
             }
 
             const userInfo = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zipCode: document.getElementById('zipcode').value
+                FirstName: document.getElementById('FirstName').value,
+                LastName: document.getElementById('LastName').value,
+                Address: document.getElementById('Address').value,
+                City: document.getElementById('City').value,
+                State: document.getElementById('State').value,
+                ZipCode: document.getElementById('ZipCode').value
             };
+
+            console.log('UserInfo:', userInfo);  // Log what's being sent to the server
 
             fetch(`http://localhost:3000/userInfo/${username}`, {
                 method: 'PUT',
@@ -147,10 +152,7 @@
                 },
                 body: JSON.stringify(userInfo)
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to save');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 alert(data.message || 'Information updated successfully');
                 window.location.href = 'Profile.html'; // Redirect to Profile page

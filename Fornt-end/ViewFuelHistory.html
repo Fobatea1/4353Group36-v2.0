@@ -28,51 +28,62 @@
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            const fuelRequestHistory = HistoryManager.getHistory();
+            const username = sessionStorage.getItem('username'); // Assuming username is stored in sessionStorage for identifying the user
+            HistoryManager.getHistory(username).then(fuelRequestHistory => {
+                if (fuelRequestHistory && fuelRequestHistory.length > 0) {
+                    const table = document.createElement('table');
+                    table.setAttribute('border', '1');
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
 
-            if (fuelRequestHistory && fuelRequestHistory.length > 0) {
-                const table = document.createElement('table');
-                table.setAttribute('border', '1');
-                const thead = document.createElement('thead');
-                const tbody = document.createElement('tbody');
-
-                const headRow = document.createElement('tr');
-                ['Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'Delivery Date'].forEach(heading => {
-                    const th = document.createElement('th');
-                    th.textContent = heading;
-                    headRow.appendChild(th);
-                });
-
-                thead.appendChild(headRow);
-                table.appendChild(thead);
-
-                fuelRequestHistory.forEach((entry, index) => {
-                    const newRow = document.createElement('tr');
-
-                    const requestNumberCell = document.createElement('td');
-                    requestNumberCell.textContent = index + 1;
-                    newRow.appendChild(requestNumberCell);
-
-                    ['gallonsRequested', 'fuelType', 'totalAmountDue', 'deliveryAddress', 'deliveryDate'].forEach(key => {
-                        const td = document.createElement('td');
-                        td.textContent = entry[key];
-                        newRow.appendChild(td);
+                    const headRow = document.createElement('tr');
+                    ['Request #', 'Gallons Requested', 'FuelType', 'Total Amount Due', 'Delivery Address', 'City', 'State', 'ZIP Code', 'Delivery Date'].forEach(heading => {
+                        const th = document.createElement('th');
+                        th.textContent = heading;
+                        headRow.appendChild(th);
                     });
 
-                    tbody.appendChild(newRow);
-                });
+                    thead.appendChild(headRow);
+                    table.appendChild(thead);
 
-                table.appendChild(tbody);
-                historyContainer.appendChild(table);
-            } else {
-                historyContainer.innerHTML = "<p>No fuel request history.</p>";
-            }
+                    fuelRequestHistory.forEach((entry, index) => {
+                        const newRow = document.createElement('tr');
+
+                        const requestNumberCell = document.createElement('td');
+                        requestNumberCell.textContent = index + 1;
+                        newRow.appendChild(requestNumberCell);
+
+                        ['GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryCity', 'DeliveryState', 'DeliveryZipCode', 'DeliveryDate'].forEach(key => {
+                            const td = document.createElement('td');
+                            if (key === 'TotalAmountDue') {
+                                td.textContent = `$${entry[key]}`;
+                            } else if (key === 'DeliveryDate') {
+                                const date = new Date(entry[key]);
+                                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+                                td.textContent = formattedDate;
+                            } else {
+                                td.textContent = entry[key];
+                            }
+                            newRow.appendChild(td);
+                        });
+
+                        tbody.appendChild(newRow);
+                    });
+
+                    table.appendChild(tbody);
+                    historyContainer.appendChild(table);
+                } else {
+                    historyContainer.innerHTML = "<p>No fuel request history.</p>";
+                }
+            });
         }
 
         function clearHistory() {
+            const username = sessionStorage.getItem('username'); // Assuming username is stored in sessionStorage
             if(confirm("Are you sure you want to clear all fuel history?")) {
-                HistoryManager.clearHistory();
-                displayFuelHistory(); // Refresh the history display
+                HistoryManager.clearHistory(username).then(() => {
+                    displayFuelHistory(); // Refresh the history display
+                });
             }
         }
 
