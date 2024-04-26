@@ -21,27 +21,23 @@
             <h2>Please enter or update your details:</h2>
             <form id="userForm">
                 <div class="input-box">
-                    <input type="text" id="firstName" maxlength="50" required>
+                    <input type="text" id="FirstName" maxlength="50" required>
                     <label>First Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="lastName" maxlength="50" required>
+                    <input type="text" id="LastName" maxlength="50" required>
                     <label>Last Name</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="address1" maxlength="100" required>
-                    <label>Address 1</label>
+                    <input type="text" id="Address" maxlength="100" required>
+                    <label>Address</label>
                 </div>
                 <div class="input-box">
-                    <input type="text" id="address2" maxlength="100">
-                    <label>&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspAddress 2 (Optional)</label>
-                </div>
-                <div class="input-box">
-                    <input type="text" id="city" maxlength="100" required>
+                    <input type="text" id="City" maxlength="100" required>
                     <label>City</label>
                 </div>
                 <div class="input-box">
-                    <select id="state" name="state" required>
+                    <select id="State" name="State" required>
                         <option value="">Select State</option>
                         <option value="AL">Alabama</option>
                         <option value="AK">Alaska</option>
@@ -94,11 +90,10 @@
                         <option value="WI">Wisconsin</option>
                         <option value="WY">Wyoming</option>
                     </select>
-                    
                 </div>
                 <div class="input-box">
-                    <input type="text" id="zipcode" minLength="5" maxLength="9" required>
-                    <label>Zipcode</label>
+                    <input type="text" id="ZipCode" minLength="5" maxLength="9" required>
+                    <label>ZIP Code</label>
                 </div>
                 <button type="button" onclick="saveUserInfo()" class="btn">Save Info</button>
             </form>
@@ -108,59 +103,82 @@
     <script>
         document.getElementById('userGreeting').innerText = sessionStorage.getItem('username') || 'User';
 
-        function saveUserInfo() {
-            const username = sessionStorage.getItem('username');
-            if (!username) {
-                alert("No username found. Please log in again.");
-                return;
-            }
-
-            const userInfo = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                address1: document.getElementById('address1').value,
-                address2: document.getElementById('address2').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zipcode: document.getElementById('zipcode').value
-            };
-
-            if (!userInfo.firstName || !userInfo.lastName || !userInfo.address1 || !userInfo.city || !userInfo.state || !userInfo.zipcode) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-
-            if (userInfo.zipcode.length < 5 || userInfo.zipcode.length > 9) {
-                alert('Please enter a valid zipcode.');
-                return;
-            }
-
-            localStorage.setItem(`userInfo_${username}`, JSON.stringify(userInfo));
-            alert('User Information Saved Successfully!');
-            window.location.href = 'Profile.html'; // Redirect to Profile page
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            populateUserInfo();
+        });
 
         function populateUserInfo() {
             const username = sessionStorage.getItem('username');
-            if (!username) {
-                console.log("No username found for loading user info.");
-                return;
-            }
-
-            const storedInfo = localStorage.getItem(`userInfo_${username}`);
-            if (storedInfo) {
-                const userInfo = JSON.parse(storedInfo);
-                document.getElementById('firstName').value = userInfo.firstName || '';
-                document.getElementById('lastName').value = userInfo.lastName || '';
-                document.getElementById('address1').value = userInfo.address1 || '';
-                document.getElementById('address2').value = userInfo.address2 || '';
-                document.getElementById('city').value = userInfo.city || '';
-                document.getElementById('state').value = userInfo.state || '';
-                document.getElementById('zipcode').value = userInfo.zipcode || '';
+            console.log('Username:', username);  // Check if username is retrieved correctly.
+            if (username) {
+                fetch(`http://localhost:3000/userInfo/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data:', data);  // Log the data to see what you receive.
+                    document.getElementById('FirstName').value = data.FirstName || '';
+                    document.getElementById('LastName').value = data.LastName || '';
+                    document.getElementById('Address').value = data.Address || '';
+                    document.getElementById('City').value = data.City || '';
+                    document.getElementById('State').value = data.State || '';
+                    document.getElementById('ZipCode').value = data.ZipCode || '';
+                })
+                .catch(error => console.error('Error loading user info:', error));
             }
         }
 
-        window.onload = populateUserInfo;
+    function saveUserInfo() {
+        const username = sessionStorage.getItem('username');
+        console.log('Saving info for:', username);  // Ensure username is correct here too
+        if (!username) {
+            alert("No username found. Please log in again.");
+            return;
+        }
+        
+        const firstName = document.getElementById('FirstName').value;
+        const lastName = document.getElementById('LastName').value;
+        const address = document.getElementById('Address').value;
+        const city = document.getElementById('City').value;
+        const state = document.getElementById('State').value;
+        const zipCode = document.getElementById('ZipCode').value;
+
+        if (firstName === '' || lastName === '' || address === '' || city === '' || state === '' || zipCode === '') {
+            alert('Please fill out all fields.');
+        return;
+    }
+
+        const userInfo = {
+            FirstName: firstName,
+            LastName: lastName,
+            Address: address,
+            City: city,
+            State: state,
+            ZipCode: zipCode
+        };
+
+        console.log('UserInfo:', userInfo);  // Log what's being sent to the server
+
+        fetch(`http://localhost:3000/userInfo/${username}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userInfo)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update user info');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || 'Information updated successfully');
+            window.location.href = 'Profile.html'; // Redirect to Profile page only on success
+        })
+        .catch(error => {
+            console.error('Failed to update user info:', error);
+            alert('Error updating information.');
+        });
+}
     </script>
 </body>
 </html>

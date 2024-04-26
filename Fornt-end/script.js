@@ -3,19 +3,15 @@ const loginLink = document.querySelector('.login-link');
 const registerLink = document.querySelector('.register-link');
 const btnLoginPopup = document.querySelector('.btnLogin-popup');
 const btnRegisterPopup = document.querySelector('.btnRegister-popup');
-const btnCloseLogin = document.querySelector('.icon-close'); /*query selector is the element that is responsible for the action*/
+const btnCloseLogin = document.querySelector('.icon-close');
 
-registerLink.addEventListener('click', ()=> {wrapper.classList.add('active');});
-loginLink.addEventListener('click', ()=> {wrapper.classList.remove('active');});
-
-btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
-btnLoginPopup.addEventListener('click', ()=> {wrapper.classList.remove('active');});
-btnCloseLogin.addEventListener('click', ()=> {wrapper.classList.remove('active-popup');});
-
-btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active-popup');});
-btnRegisterPopup.addEventListener('click', ()=> {wrapper.classList.add('active');});
-
-//check if button works
+registerLink.addEventListener('click', () => { wrapper.classList.add('active'); });
+loginLink.addEventListener('click', () => { wrapper.classList.remove('active'); });
+btnLoginPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
+btnLoginPopup.addEventListener('click', () => { wrapper.classList.remove('active'); });
+btnCloseLogin.addEventListener('click', () => { wrapper.classList.remove('active-popup'); });
+btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active-popup'); });
+btnRegisterPopup.addEventListener('click', () => { wrapper.classList.add('active'); });
 
 document.cookie = "wrapper-visible=true";
 
@@ -29,47 +25,78 @@ btnRegisterPopup.addEventListener('click', ()=> {
     document.cookie = "wrapper-visible=true";
   });
 
-function loginUser(){
+
+  function loginUser(event) {
+    event.preventDefault();
+    const loginButton = document.getElementById('loginButton');
+    loginButton.disabled = true;
 
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
-    const user = JSON.parse(localStorage.getItem(username));
 
-    if (username === user.username && password === user.password) {
-        sessionStorage.setItem('username', username);
-        sessionStorage.setItem('userType', user.userType);
-        window.location.href = 'Success.html?username=' + encodeURIComponent(user.username);
-        alert('Login Successful!');
-        
-        // Redirect or display login success message here 
-    } else {
-        alert('Invalid Username or Password.');
-    }
-
-    
+    fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Login successful') {
+            console.log('Token received:', data.token); // Console log for debugging
+            sessionStorage.setItem('token', data.token);
+            sessionStorage.setItem('username', username);
+            window.location.href = 'Success.html?username=' + encodeURIComponent(username);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+        alert('Error logging in. ' + error.toString());
+    })
+    .finally(() => {
+        loginButton.disabled = false;
+    });
 }
 
+
 function registerUser() {
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    const termsCheckbox = document.getElementById('termsCheckbox');
 
-  if(document.getElementById('registerUsername').value === '' || document.getElementById('registerPassword').value == ''){
-        alert('Invalid Username or Password.');
-        return false;
+    if (!termsCheckbox.checked) {
+        alert('Please agree to the terms & conditions.');
+        return;
     }
-  else{  
-        const username = document.getElementById('registerUsername').value;
-        const password = document.getElementById('registerPassword').value;
-        const userType = document.querySelector('input[name="userType"]:checked').value;
+    
+    if (username === '' || password === '') {
+        alert('Invalid Username or Password.');
+        return;
+    }
 
-        const user = {
-            username,
-            password,
-            userType
-        };
-
-        localStorage.setItem(username, JSON.stringify(user));
-        alert('Registration Successful. You can now log in.');
-        wrapper.classList.remove('active-popup');
-    }   
+    fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, userType })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok. Status: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        if (data.message === 'User registered successfully') {
+            wrapper.classList.remove('active-popup');
+        }
+    })
+    .catch(error => {
+        console.error('Registration error:', error);
+        alert('Error registering. ' + error.toString());
+    });
 }
 
 const registerButton = document.getElementById('registerButton');
@@ -80,14 +107,14 @@ loginButton.addEventListener('click', loginUser);
 
 document.addEventListener('DOMContentLoaded', () => {
     const userType = sessionStorage.getItem('userType');
-    if (page === '/Profile.html' && userType === 'Admin') {
+    if (location.pathname.endsWith('/Profile.html') && userType === 'Admin') {
         const adminButton = document.createElement('button');
         adminButton.textContent = 'View Admin Info';
         adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
         document.body.appendChild(adminButton);
     }
 });
-// Exporting functions for Jest testing, only if module.exports is available
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { loginUser: window.loginUser, registerUser: window.registerUser, redirectTo: window.redirectTo };
+    module.exports = { loginUser, registerUser };
 }
