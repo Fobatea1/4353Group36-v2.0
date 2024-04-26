@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Fuel History</title>
+    <title>Master Fuel History</title>
     <link rel="stylesheet" href="ViewHistory.css">
     <script src="HistoryManager.js" defer></script>
 </head>
@@ -17,19 +17,18 @@
         </nav>
     </header>
     <div class="historyWrapper">
-        <h2>Fuel Request History</h2>
+        <h2>Master Fuel Request History</h2>
         <div id="fuelHistoryContainer"></div>
     </div>
     <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-        <!-- Removed Clear History Button -->
+        <!-- Removed the clearHistory button -->
         <button onclick="viewProfile()" class="btn">View Profile</button>
         <button onclick="requestFuel()" class="btn">Place New Order</button>
     </div>
     <script>
         function displayFuelHistory() {
             const historyContainer = document.getElementById('fuelHistoryContainer');
-            const username = sessionStorage.getItem('username'); // Assuming username is stored in sessionStorage for identifying the user
-            fetch(`http://localhost:3000/getFuelHistory/${username}`)
+            fetch(`http://localhost:3000/getAllFuelHistory`)
             .then(response => response.json())
             .then(fuelRequestHistory => {
                 if (fuelRequestHistory && fuelRequestHistory.length > 0) {
@@ -37,21 +36,20 @@
                     table.setAttribute('border', '1');
                     const thead = document.createElement('thead');
                     const tbody = document.createElement('tbody');
-        
+
                     const headRow = document.createElement('tr');
-                    ['Order #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'City', 'State', 'ZIP Code', 'Delivery Date'].forEach(heading => {
+                    ['User ID', 'Request #', 'Gallons Requested', 'Fuel Type', 'Total Amount Due', 'Delivery Address', 'City', 'State', 'ZIP Code', 'Delivery Date'].forEach(heading => {
                         const th = document.createElement('th');
                         th.textContent = heading;
                         headRow.appendChild(th);
                     });
-        
+
                     thead.appendChild(headRow);
                     table.appendChild(thead);
-        
+
                     fuelRequestHistory.forEach(entry => {
                         const newRow = document.createElement('tr');
-        
-                        ['RequestID', 'GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryCity', 'DeliveryState', 'DeliveryZipCode', 'DeliveryDate'].forEach(key => {
+                        ['UserID', 'RequestID', 'GallonsRequested', 'FuelType', 'TotalAmountDue', 'DeliveryAddress', 'DeliveryCity', 'DeliveryState', 'DeliveryZipCode', 'DeliveryDate'].forEach(key => {
                             const td = document.createElement('td');
                             if (key === 'TotalAmountDue') {
                                 td.textContent = `$${parseFloat(entry[key]).toFixed(2)}`;
@@ -64,10 +62,10 @@
                             }
                             newRow.appendChild(td);
                         });
-        
+
                         tbody.appendChild(newRow);
                     });
-        
+
                     table.appendChild(tbody);
                     historyContainer.appendChild(table);
                 } else {

@@ -241,6 +241,17 @@ app.get('/getFuelHistory/:username', (req, res) => {
     });
 });
 
+app.get('/getAllFuelHistory', (req, res) => {
+    const sql = 'SELECT * FROM FuelHistory JOIN UserAccounts ON FuelHistory.UserID = UserAccounts.UserID';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching all fuel histories:', err);
+            return res.status(500).json({ message: 'Error fetching all fuel histories' });
+        }
+        res.json(results);
+    });
+});
+
 app.get('/checkHistory/:username', (req, res) => {
     const username = req.params.username;
     const sql = 'SELECT COUNT(*) AS count FROM FuelHistory JOIN UserAccounts ON FuelHistory.UserID = UserAccounts.UserID WHERE UserAccounts.Username = ?';
@@ -254,18 +265,7 @@ app.get('/checkHistory/:username', (req, res) => {
     });
 });
 
-app.delete('/clearFuelHistory/:username', (req, res) => {
-    const username = req.params.username;
-    const sql = 'DELETE FROM FuelHistory WHERE UserID = (SELECT UserID FROM UserAccounts WHERE Username = ?)';
-    db.query(sql, [username], (err, result) => {
-        if (err) {
-            console.error('Error clearing fuel history:', err);
-            return res.status(500).json({ message: 'Error clearing fuel history' });
-        }
-        res.json({ message: 'Fuel history cleared successfully' });
-    });
-});
-
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+

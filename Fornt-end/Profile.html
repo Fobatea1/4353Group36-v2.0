@@ -72,6 +72,12 @@
                 adminButton.onclick = () => window.location.href = 'AdminDashboard.html';
                 adminButton.classList.add('btn');
                 buttonContainer.appendChild(adminButton);
+
+                const masterFuelHistoryButton = document.createElement('button');
+                masterFuelHistoryButton.innerText = 'View Master Fuel History';
+                masterFuelHistoryButton.onclick = () => window.location.href = 'MasterFuelHistory.html';
+                masterFuelHistoryButton.classList.add('btn');
+                buttonContainer.appendChild(masterFuelHistoryButton);
             }
         }
 

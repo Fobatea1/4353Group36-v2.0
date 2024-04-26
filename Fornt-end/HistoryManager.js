@@ -53,17 +53,4 @@ class HistoryManager {
             console.error('Error retrieving history:', error);
         }
     }
-
-    static async clearHistory(username) {
-        try {
-            const response = await fetch(`http://localhost:3000/clearFuelHistory/${username}`, {
-                method: 'DELETE',
-                credentials: 'include' // Sending session cookies with the request
-            });
-            const data = await response.text();
-            console.log(data);
-        } catch (error) {
-            console.error('Error clearing history:', error);
-        }
-    }
 }
