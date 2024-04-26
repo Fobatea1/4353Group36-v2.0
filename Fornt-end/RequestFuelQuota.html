@@ -108,37 +108,68 @@
     </div>
 
     <script>
-
-    function calculateMargin(gallons, state) {
-        const currentPricePerGallon = 1.50; // Static base price
-        const locationFactor = state === "TX" ? 0.02 : 0.04;
-        const rateHistoryFactor = 0.01; // Assuming some history for simplicity, adjust as needed
-        const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
-        const companyProfitFactor = 0.10;
-
-        return currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
-    }
-
-    function calculateTotalAmount() {
-        const gallons = parseFloat(document.getElementById('GallonsRequested').value);
-        const state = document.getElementById('DeliveryState').value;
-        const basePricePerGallon = parseFloat(document.getElementById('FuelType').value);
-
-        if (!isNaN(gallons) && !isNaN(basePricePerGallon) && state) {
-            const margin = calculateMargin(gallons, state);
-            const pricePerGallon = basePricePerGallon + margin;
-            const totalAmount = gallons * pricePerGallon;
-            document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
-        } else {
-            document.getElementById('TotalAmountDue').textContent = `$0.00`;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user info and check history when the page loads
+            loadUserInfoAndCheckHistory();
+        });
+        
+        async function loadUserInfoAndCheckHistory() {
+            const username = sessionStorage.getItem('username'); // Assuming username is stored in sessionStorage
+            if (username) {
+                try {
+                    const userInfoResponse = await fetch(`http://localhost:3000/userInfo/${username}`);
+                    const userInfo = await userInfoResponse.json();
+                    console.log("Received userInfo:", userInfo);
+                    if (userInfo.Address) {
+                        document.getElementById('DeliveryAddress').value = userInfo.Address;
+                        document.getElementById('DeliveryCity').value = userInfo.City;
+                        document.getElementById('DeliveryState').value = userInfo.State;
+                        document.getElementById('DeliveryZipCode').value = userInfo.ZipCode;
+                    }
+        
+                    const historyResponse = await fetch(`http://localhost:3000/checkHistory/${username}`);
+                    const historyData = await historyResponse.json();
+                    updatePricingBasedOnHistory(historyData.hasHistory);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            } else {
+                console.error("No username found in session storage.");
+            }
         }
-    }
-
-    document.getElementById('GallonsRequested').addEventListener('input', calculateTotalAmount);
-    document.getElementById('FuelType').addEventListener('change', calculateTotalAmount);
-    document.getElementById('DeliveryState').addEventListener('change', calculateTotalAmount);
-
-
+        
+        function updatePricingBasedOnHistory(hasHistory) {
+            const historyFactor = hasHistory ? 0.01 : 0.0;
+            document.getElementById('GallonsRequested').addEventListener('input', () => calculateTotalAmount(historyFactor));
+            document.getElementById('FuelType').addEventListener('change', () => calculateTotalAmount(historyFactor));
+            document.getElementById('DeliveryState').addEventListener('change', () => calculateTotalAmount(historyFactor));
+            calculateTotalAmount(historyFactor); // Initial calculation on page load
+        }
+        
+        function calculateTotalAmount(historyFactor) {
+            const gallons = parseFloat(document.getElementById('GallonsRequested').value);
+            const state = document.getElementById('DeliveryState').value;
+            const basePricePerGallon = parseFloat(document.getElementById('FuelType').value);
+        
+            if (!isNaN(gallons) && !isNaN(basePricePerGallon) && state) {
+                const margin = calculateMargin(gallons, state, historyFactor);
+                const pricePerGallon = basePricePerGallon + margin;
+                const totalAmount = gallons * pricePerGallon;
+                document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
+            } else {
+                document.getElementById('TotalAmountDue').textContent = `$0.00`;
+            }
+        }
+        
+        function calculateMargin(gallons, state, historyFactor) {
+            const currentPricePerGallon = parseFloat(document.getElementById('FuelType').value);
+            const locationFactor = state === "TX" ? 0.02 : 0.04;
+            const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+            const companyProfitFactor = 0.10;
+        
+            return currentPricePerGallon * (locationFactor - historyFactor + gallonsRequestedFactor + companyProfitFactor);
+        }
+        
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const fuelRequestData = {
@@ -158,26 +189,7 @@
                 console.error('Error adding history entry:', error);
             });
         });
-
-        window.onload = async function() {
-            console.log("Page loaded, fetching user info.");
-            try {
-                const username = sessionStorage.getItem('username');
-                console.log(`Attempting to fetch info for username: ${username}`);
-                const response = await fetch(`http://localhost:3000/userInfo/${username}`);
-                const userInfo = await response.json();
-                console.log("Received userInfo:", userInfo);
-                if(userInfo.Address) {
-                    document.getElementById('DeliveryAddress').value = userInfo.Address;
-                    document.getElementById('DeliveryCity').value = userInfo.City;
-                    document.getElementById('DeliveryState').value = userInfo.State;
-                    document.getElementById('DeliveryZipCode').value = userInfo.ZipCode;
-                    calculateTotalAmount();
-                }
-            } catch (error) {
-                console.error('Error fetching user info:', error);
-            }
-        };
-    </script>
+        </script>
+        
 </body>
 </html>

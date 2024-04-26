@@ -241,6 +241,19 @@ app.get('/getFuelHistory/:username', (req, res) => {
     });
 });
 
+app.get('/checkHistory/:username', (req, res) => {
+    const username = req.params.username;
+    const sql = 'SELECT COUNT(*) AS count FROM FuelHistory JOIN UserAccounts ON FuelHistory.UserID = UserAccounts.UserID WHERE UserAccounts.Username = ?';
+    db.query(sql, [username], (err, results) => {
+        if (err) {
+            console.error('Error checking user history:', err);
+            return res.status(500).json({ message: 'Error checking user history' });
+        }
+        const hasHistory = results[0].count > 0;
+        res.json({ hasHistory });
+    });
+});
+
 app.delete('/clearFuelHistory/:username', (req, res) => {
     const username = req.params.username;
     const sql = 'DELETE FROM FuelHistory WHERE UserID = (SELECT UserID FROM UserAccounts WHERE Username = ?)';
