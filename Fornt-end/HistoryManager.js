@@ -1,5 +1,4 @@
 class HistoryManager {
-
     static async addEntry(entry) {
         try {
           const headers = new Headers();
@@ -53,7 +52,6 @@ class HistoryManager {
         } catch (error) {
             console.error('Error retrieving history:', error);
         }
-
     }
 
     static async clearHistory(username) {
