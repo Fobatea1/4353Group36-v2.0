@@ -85,25 +85,54 @@ describe('User Interaction Tests', () => {
   });
 });
 
-// Test suite for the redirectTo function
-describe('Window redirectTo function', () => {
-  test('should change window location href', () => {
-    // Mock window.location with an object to capture href changes
-    delete window.location;
-    window.location = { href: '' };
+// Test suite for registerUser function
+describe('Register User Function Tests', () => {
+  test('Successful registration', () => {
+    // Mock successful fetch response
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ message: 'User registered successfully' })
+      })
+    );
 
-    redirectTo('http://example.com');
-    expect(window.location.href).toBe('http://example.com');
+    registerUser();
 
-    // Restore window.location
-    delete window.location;
-    window.location = document.createElement('a');
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:3000/register',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'testUser', password: 'wrongPassword', userType: 'Customer' })
+      })
+    );
+
+    expect(alert).toHaveBeenCalledWith('User registered successfully');
+    expect(document.querySelector('.wrapper').classList.remove).toHaveBeenCalledWith('active-popup');
+  });
+
+  test('Unsuccessful registration', async () => {
+    // Mock unsuccessful fetch response
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request'
+      })
+    );
+
+    registerUser();
+
+    // Await the promise resolution in order to test the alert message
+    await Promise.resolve();
+
+    expect(alert).toHaveBeenCalledWith('Error registering. Error: Network response was not ok. Status: 400');
   });
 });
 
 // Test suite for DOMContentLoaded event listeners
 describe('DOMContentLoaded event listeners', () => {
-  test('should attach listeners and modify classes correctly', () => {
+  test('Attach listeners and modify classes correctly', () => {
     // Trigger DOMContentLoaded event
     document.dispatchEvent(new Event('DOMContentLoaded'));
 
@@ -121,5 +150,21 @@ describe('DOMContentLoaded event listeners', () => {
 
     // Since the handlers are called immediately upon adding the event listener due to the mock setup,
     // there is no need to manually invoke the handlers in this test.
+  });
+});
+
+// Test suite for the redirectTo function
+describe('Window redirectTo function', () => {
+  test('Should change window location href', () => {
+    // Mock window.location with an object to capture href changes
+    delete window.location;
+    window.location = { href: '' };
+
+    redirectTo('http://example.com');
+    expect(window.location.href).toBe('http://example.com');
+
+    // Restore window.location
+    delete window.location;
+    window.location = document.createElement('a');
   });
 });
