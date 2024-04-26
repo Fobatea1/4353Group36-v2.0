@@ -11,11 +11,18 @@ describe('View Fuel History Page', () => {
 
     beforeEach(() => {
         // Set up a DOM environment using JSDOM
-        dom = new JSDOM(html);
+        dom = new JSDOM(html, { runScripts: 'dangerously' });
         document = dom.window.document;
         window = dom.window;
 
-        // Mock any necessary functions or APIs
+        // Mock HistoryManager
+        window.HistoryManager = {
+            getHistory: jest.fn(() => Promise.resolve([])), // Mock an empty history array
+            clearHistory: jest.fn(() => Promise.resolve())
+        };
+
+        // Mock the confirm function for clearing history
+        window.confirm = jest.fn(() => true);
 
         // Execute the script in the HTML
         const scriptElement = document.querySelector('script');
@@ -23,49 +30,98 @@ describe('View Fuel History Page', () => {
     });
 
     test('Check if fuel history table exists', () => {
-        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
+        const fuelHistoryTable = document.querySelector('#fuelHistoryContainer table');
         expect(fuelHistoryTable).not.toBeNull();
     });
 
-    test('Check if fuel history table has rows', () => {
-        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
-        const rows = fuelHistoryTable.querySelectorAll('tr');
-        expect(rows.length).toBeGreaterThan(0);
+    test('Check if clearHistory function is called on button click', () => {
+        const clearHistoryBtn = document.querySelector('button[data-action="clearHistory"]');
+        clearHistoryBtn.click();
+        expect(window.confirm).toHaveBeenCalled();
+        expect(window.HistoryManager.clearHistory).toHaveBeenCalled();
     });
 
-    test('Check if fuel history table displays the correct columns', () => {
-        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
-        const headerRow = fuelHistoryTable.querySelector('tr');
-        const headerCells = headerRow.querySelectorAll('th');
-
-        // Assuming column headers are 'Date', 'Fuel Type', 'Quantity'
-        const expectedHeaders = ['Date', 'Fuel Type', 'Quantity'];
-
-        headerCells.forEach((cell, index) => {
-            expect(cell.textContent).toBe(expectedHeaders[index]);
-        });
+    test('Check if viewProfile function is called on button click', () => {
+        const viewProfileBtn = document.querySelector('button[data-action="viewProfile"]');
+        viewProfileBtn.click();
+        expect(window.location.href).toBe('Profile.html');
     });
 
-    test('Check if fuel history table row data is correct', () => {
-        const fuelHistoryTable = document.getElementById('fuelHistoryTable');
-        const dataRows = fuelHistoryTable.querySelectorAll('tr');
+    test('Check if requestFuel function is called on button click', () => {
+        const requestFuelBtn = document.querySelector('button[data-action="requestFuel"]');
+        requestFuelBtn.click();
+        expect(window.location.href).toBe('RequestFuelQuota.html');
+    });
 
-        // Assuming data is hardcoded or fetched dynamically
-        // You can update this with actual data as needed for testing
+    test('Check if displayFuelHistory handles empty history', async () => {
+        await window.displayFuelHistory(); // Call displayFuelHistory with empty history
+        const fuelHistoryContainer = document.getElementById('fuelHistoryContainer');
+        expect(fuelHistoryContainer.innerHTML).toContain('<p>No fuel request history.</p>');
+    });
 
-        // Assuming data is in the format [date, fuel type, quantity]
-        const expectedData = [
-            ['2021-08-16', 'Gasoline', '30'],
-            ['2021-08-15', 'Diesel', '40'],
-            // Add more sample data as needed
-        ];
+    test('Check if displayFuelHistory correctly formats delivery date', async () => {
+        const mockHistory = [{
+            DeliveryDate: '2023-04-25T00:00:00.000Z', // Sample delivery date
+        }];
+        window.HistoryManager.getHistory.mockResolvedValueOnce(mockHistory);
+        await window.displayFuelHistory();
+        const dateCell = document.querySelector('#fuelHistoryContainer table tbody tr td');
+        expect(dateCell.textContent).toBe('4/25/2023');
+    });
 
-        dataRows.forEach((row, index) => {
-            const cells = row.querySelectorAll('td');
-            expectedData[index].forEach((expectedValue, cellIndex) => {
-                expect(cells[cellIndex].textContent).toBe(expectedValue);
-            });
-        });
+    test('Check if displayFuelHistory handles non-empty history', async () => {
+        const mockHistory = [{
+            RequestNumber: 1,
+            GallonsRequested: '50',
+            FuelType: 'Gasoline',
+            TotalAmountDue: '56.00',
+            DeliveryAddress: '123 Main St',
+            City: 'Anytown',
+            State: 'CA',
+            ZipCode: '12345',
+            DeliveryDate: '2023-04-25T00:00:00.000Z', // Sample delivery date
+        }];
+        window.HistoryManager.getHistory.mockResolvedValueOnce(mockHistory);
+        await window.displayFuelHistory();
+        const fuelHistoryContainer = document.getElementById('fuelHistoryContainer');
+        const table = fuelHistoryContainer.querySelector('table');
+        expect(table).not.toBeNull();
+        const rows = table.querySelectorAll('tr');
+        expect(rows.length).toBe(mockHistory.length + 1); // Including header row
+        const dataCells = rows[1].querySelectorAll('td'); // First row after header
+        expect(dataCells.length).toBe(9); // Assuming 9 columns in the table
+    });
+
+    test('Check if clearHistory function is not called when user cancels', () => {
+        window.confirm.mockReturnValueOnce(false); // Simulate user canceling
+        const clearHistoryBtn = document.querySelector('button[data-action="clearHistory"]');
+        clearHistoryBtn.click();
+        expect(window.confirm).toHaveBeenCalled();
+        expect(window.HistoryManager.clearHistory).not.toHaveBeenCalled();
+    });
+
+    test('Check if displayFuelHistory handles missing username in sessionStorage', async () => {
+        sessionStorage.removeItem('username'); // Remove username from sessionStorage
+        await window.displayFuelHistory();
+        expect(window.HistoryManager.getHistory).not.toHaveBeenCalled();
+    });
+
+    test('Check if displayFuelHistory handles failure in getHistory', async () => {
+        window.HistoryManager.getHistory.mockRejectedValueOnce(new Error('Failed to fetch history')); // Simulate failure
+        await window.displayFuelHistory();
+        const fuelHistoryContainer = document.getElementById('fuelHistoryContainer');
+        expect(fuelHistoryContainer.innerHTML).toContain('<p>Error loading fuel request history.</p>');
+    });
+
+    test('Check if clearHistory function handles failure in clearHistory', async () => {
+        window.confirm.mockReturnValueOnce(true); // Simulate user confirmation
+        window.HistoryManager.clearHistory.mockRejectedValueOnce(new Error('Failed to clear history')); // Simulate failure
+        const clearHistoryBtn = document.querySelector('button[data-action="clearHistory"]');
+        clearHistoryBtn.click();
+        await Promise.resolve(); // Resolve any promises
+        expect(window.HistoryManager.clearHistory).toHaveBeenCalled();
+        const fuelHistoryContainer = document.getElementById('fuelHistoryContainer');
+        expect(fuelHistoryContainer.innerHTML).toContain('<p>Error clearing fuel request history.</p>');
     });
 
 });
