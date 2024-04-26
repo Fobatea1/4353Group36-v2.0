@@ -114,7 +114,7 @@
         });
         
         async function loadUserInfoAndCheckHistory() {
-            const username = sessionStorage.getItem('username'); // Assuming username is stored in sessionStorage
+            const username = sessionStorage.getItem('username');
             if (username) {
                 try {
                     const userInfoResponse = await fetch(`http://localhost:3000/userInfo/${username}`);
