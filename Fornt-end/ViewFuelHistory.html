@@ -105,41 +105,61 @@
         }
         
         window.onload = displayFuelHistory;
-
+        //New code
         function viewCustomerHistory() {
-    fetch('http://localhost:3000/allUsers') // Endpoint to fetch all users
+    // Create a new container for the customer histories
+    const customersHistoryContainer = document.createElement('div');
+    customersHistoryContainer.id = 'customersHistoriesContainer';
+    customersHistoryContainer.innerHTML = "<h2>Customers' Fuel Request Histories</h2>";
+
+    // Place the new container below the buttons
+    const buttonContainer = document.querySelector('div.historyWrapper').nextElementSibling;
+    document.body.insertBefore(customersHistoryContainer, buttonContainer.nextSibling);
+
+    // Fetch all users from the server
+    fetch('http://localhost:3000/allUsers')
     .then(response => response.json())
     .then(users => {
-        const container = document.createElement('div');
-        container.id = 'allHistoriesContainer';
-        document.body.appendChild(container); // Append this container to the body
-
+        // Iterate over each user
         users.forEach(user => {
-            fetch(`http://localhost:3000/getFuelHistory/${user.Username}`) // Fetch history for each user
+            // Optionally skip the admin's history by checking a condition, e.g., user.AccountType
+            if (user.AccountType === 'Admin') {
+                return;
+            }
+
+            // Fetch the user's history using the getFuelHistory endpoint
+            fetch(`http://localhost:3000/getFuelHistory/${user.Username}`)
             .then(response => response.json())
             .then(history => {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'user-history';
-                userDiv.innerHTML = `<h3>History for ${user.Username}</h3>`;
+                // Check if the user has history records
                 if (history.length > 0) {
+                    // Create a new table for the user's history
                     const table = document.createElement('table');
-                    table.innerHTML = '<tr><th>Order #</th><th>Gallons Requested</th><th>Fuel Type</th><th>Total Amount Due</th><th>Delivery Address</th><th>City</th><th>State</th><th>ZIP Code</th><th>Delivery Date</th></tr>';
+                    table.setAttribute('border', '1');
+                    table.innerHTML = `<tr><th>Order #</th><th>Gallons Requested</th><th>Fuel Type</th><th>Total Amount Due</th><th>Delivery Address</th><th>City</th><th>State</th><th>ZIP Code</th><th>Delivery Date</th></tr>`;
                     history.forEach((entry, index) => {
+                        // Populate the table with history data
                         let row = `<tr><td>${index + 1}</td><td>${entry.GallonsRequested}</td><td>${entry.FuelType}</td><td>$${parseFloat(entry.TotalAmountDue).toFixed(2)}</td><td>${entry.DeliveryAddress}</td><td>${entry.DeliveryCity}</td><td>${entry.DeliveryState}</td><td>${entry.DeliveryZipCode}</td><td>${new Date(entry.DeliveryDate).toLocaleDateString()}</td></tr>`;
                         table.innerHTML += row;
                     });
-                    userDiv.appendChild(table);
-                } else {
-                    userDiv.innerHTML += '<p>No history available.</p>';
+
+                    // Create a container div for the user's history and append the table to it
+                    const userHistoryDiv = document.createElement('div');
+                    userHistoryDiv.className = 'user-history';
+                    userHistoryDiv.innerHTML = `<h3>History for ${user.Username}</h3>`;
+                    userHistoryDiv.appendChild(table);
+
+                    // Append the user's history div to the customer histories container
+                    customersHistoryContainer.appendChild(userHistoryDiv);
                 }
-                container.appendChild(userDiv);
-            });
+            })
+            .catch(error => console.error('Error fetching user history:', error));
         });
     })
-    .catch(error => {
-        console.error('Error fetching all users history:', error);
-    });
+    .catch(error => console.error('Error fetching all users:', error));
 }
+
+        //New Code
         </script>
 </body>
 </html>
