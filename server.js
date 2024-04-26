@@ -11,13 +11,13 @@ const saltRounds = 10;
 const secretKey = 'your_secret_key';
 
 const corsOptions = {
-    origin: 'http://127.0.0.1:5502', // Adjust if necessary
+    origin: 'http://127.0.0.1:5502',
     optionsSuccessStatus: 200,
     credentials: true,
 };
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
@@ -35,6 +35,41 @@ db.connect(err => {
     }
     console.log('Connected to MySQL database.');
 });
+
+async function calculateMargin(UserID, state, gallons) {
+    const currentPrice = 1.50;
+    const locationFactor = state === "TX" ? 0.02 : 0.04;
+    const rateHistoryFactor = await hasFuelHistory(UserID) ? 0.01 : 0.0;
+    const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+    const companyProfitFactor = 0.10;
+
+    const margin = currentPrice * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+
+    // Debugging outputs
+    console.log(`Calculating Margin:`);
+    console.log(`Current Price: $${currentPrice}`);
+    console.log(`Location Factor: ${locationFactor * 100}%`);
+    console.log(`Rate History Factor: ${rateHistoryFactor * 100}%`);
+    console.log(`Gallons Requested Factor: ${gallonsRequestedFactor * 100}%`);
+    console.log(`Company Profit Factor: ${companyProfitFactor * 100}%`);
+    console.log(`Calculated Margin: $${margin.toFixed(2)}`);
+
+    return margin;
+}
+
+function hasFuelHistory(UserID) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT COUNT(*) AS count FROM FuelHistory WHERE UserID = ?';
+        db.query(sql, [UserID], (err, results) => {
+            if (err) {
+                console.error('Error checking user history:', err);
+                reject(err);
+            } else {
+                resolve(results[0].count > 0);
+            }
+        });
+    });
+}
 
 app.post('/register', (req, res) => {
     const { username, password, userType, firstName, lastName } = req.body;
@@ -86,9 +121,6 @@ app.post('/login', (req, res) => {
         }
     });
 });
-
-
-
 
 app.get('/userInfo/:username', (req, res) => {
     const username = req.params.username;
@@ -145,7 +177,7 @@ app.get('/allUsers', (req, res) => {
     });
 });
 
-app.post('/addFuelHistory', (req, res) => {
+app.post('/addFuelHistory', async (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return res.status(401).json({ message: 'Authorization header is missing' });
@@ -160,9 +192,9 @@ app.post('/addFuelHistory', (req, res) => {
         const decoded = jwt.verify(token, secretKey);
         const UserID = decoded.userID;
 
-        // Assuming FuelType comes in the format "Type - $Price/gallon"
         const { GallonsRequested, FuelType, DeliveryAddress, DeliveryCity, DeliveryState, DeliveryZipCode, DeliveryDate } = req.body;
-        const pricePerGallon = parseFloat(FuelType.split(' - $')[1].split('/gallon')[0]);
+        const margin = await calculateMargin(UserID, DeliveryState, GallonsRequested);
+        const pricePerGallon = 1.50 + margin;
         const TotalAmountDue = GallonsRequested * pricePerGallon;
 
         const sql = `INSERT INTO FuelHistory (
@@ -180,8 +212,8 @@ app.post('/addFuelHistory', (req, res) => {
         db.query(sql, [
             UserID, 
             GallonsRequested, 
-            FuelType.split(' - ')[0], // Assuming we only want to store the fuel type without price
-            TotalAmountDue.toFixed(2), // Ensure it's a string with 2 decimal places
+            FuelType, 
+            TotalAmountDue.toFixed(2), 
             DeliveryAddress, 
             DeliveryCity, 
             DeliveryState, 
@@ -192,7 +224,7 @@ app.post('/addFuelHistory', (req, res) => {
                 console.error('Error adding fuel history:', err);
                 return res.status(500).json({ message: 'Error adding fuel history' });
             }
-            res.json({ message: 'Fuel history added successfully' });
+            res.json({ message: 'Fuel history added successfully', pricePerGallon: pricePerGallon.toFixed(2) });
         });
     } catch (err) {
         console.error('Token verification failed:', err);
