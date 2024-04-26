@@ -89,7 +89,7 @@ input[type="text"]{
     padding: 10px 20px 8px;
     border: 0;
     border-radius: 4px;
-    width: 300px;
+    width: 307px;
 }
 
 .informationWrapper{
@@ -157,4 +157,76 @@ input[type="text"]{
 .btn:hover {
     background-color: #000;
     color: greenyellow;
+}
+
+select {
+
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 200px;
+  }
+  
+  /* Styles for the options */
+  option {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Styles for the hover state */
+  option:hover {
+    background-color: #007bff;
+  }
+  
+  /* Styles for the selected option */
+  option:checked {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  /* Styles for the select dropdown arrow */
+select:after {
+    color:#000;
+    content: '\25BC'; /* Unicode for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
+
+  /* Targeting the date input by its ID */
+#DeliveryDate {
+    /* Example styles */
+    color: #333; /* Text color */
+    border: 1px solid #ccc; /* Border color */
+    padding: 8px; /* Padding around the input */
+    border-radius: 4px; /* Rounded corners */
+    outline: none; /* Remove default outline */
+    /* You can add more styles as needed */
+  }
+  
+  /* Optional: Adjusting the appearance of the calendar dropdown arrow */
+  #DeliveryDate::-webkit-calendar-picker-indicator {
+    /* Example styles */
+    color: #666; /* Color of the dropdown arrow */
+    font-size: 0.8em; /* Size of the dropdown arrow */
+    /* You can add more styles as needed */
+  }
+  
+  .centeredLabel {
+    display: block;
+    text-align: center;
+}
+
+label.biggerFont {
+    font-size: 1.2em; /* Adjust the font size as needed */
+}
+
+.totalAmount{
+    font-size: 3em;
+}
+
+.spacedLabel {
+    margin-left: 165px; /* Adjust the amount of space as needed */
 }
