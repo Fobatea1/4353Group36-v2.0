@@ -24,6 +24,7 @@
         <button onclick="clearHistory()" class="btn">Clear History</button>
         <button onclick="viewProfile()" class="btn">View Profile</button>
         <button onclick="requestFuel()" class="btn">Place Order</button>
+        <button onclick="viewCustomerHistory()" class="btn">View Customer History</button>
     </div>
     <script>
         function displayFuelHistory() {
@@ -104,6 +105,41 @@
         }
         
         window.onload = displayFuelHistory;
+
+        function viewCustomerHistory() {
+    fetch('http://localhost:3000/allUsers') // Endpoint to fetch all users
+    .then(response => response.json())
+    .then(users => {
+        const container = document.createElement('div');
+        container.id = 'allHistoriesContainer';
+        document.body.appendChild(container); // Append this container to the body
+
+        users.forEach(user => {
+            fetch(`http://localhost:3000/getFuelHistory/${user.Username}`) // Fetch history for each user
+            .then(response => response.json())
+            .then(history => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-history';
+                userDiv.innerHTML = `<h3>History for ${user.Username}</h3>`;
+                if (history.length > 0) {
+                    const table = document.createElement('table');
+                    table.innerHTML = '<tr><th>Order #</th><th>Gallons Requested</th><th>Fuel Type</th><th>Total Amount Due</th><th>Delivery Address</th><th>City</th><th>State</th><th>ZIP Code</th><th>Delivery Date</th></tr>';
+                    history.forEach((entry, index) => {
+                        let row = `<tr><td>${index + 1}</td><td>${entry.GallonsRequested}</td><td>${entry.FuelType}</td><td>$${parseFloat(entry.TotalAmountDue).toFixed(2)}</td><td>${entry.DeliveryAddress}</td><td>${entry.DeliveryCity}</td><td>${entry.DeliveryState}</td><td>${entry.DeliveryZipCode}</td><td>${new Date(entry.DeliveryDate).toLocaleDateString()}</td></tr>`;
+                        table.innerHTML += row;
+                    });
+                    userDiv.appendChild(table);
+                } else {
+                    userDiv.innerHTML += '<p>No history available.</p>';
+                }
+                container.appendChild(userDiv);
+            });
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching all users history:', error);
+    });
+}
         </script>
 </body>
 </html>
