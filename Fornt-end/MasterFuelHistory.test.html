@@ -1,1 +1,121 @@
+<!-- MasterFuelHistory.test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test for MasterFuelHistory.html</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine-html.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/boot.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/3.5.0/mock-ajax.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdom/16.7.0/jsdom.min.js"></script>
+    <script src="HistoryManager.js"></script>
+</head>
+<body>
+    <script>
+        describe('MasterFuelHistory Tests', function() {
+            beforeEach(function() {
+                // Set up a DOM environment
+                const { JSDOM } = jsdom;
+                const { window } = new JSDOM(`
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Test DOM</title>
+                    </head>
+                    <body>
+                        <div id="fuelHistoryContainer"></div>
+                    </body>
+                    </html>
+                `);
+                global.window = window;
+                global.document = window.document;
+            });
+
+            afterEach(function() {
+                // Clean up after each test
+                delete global.window;
+                delete global.document;
+            });
+
+            it('should display fuel history', function(done) {
+                const historyData = [
+                    { UserID: '123', RequestID: '1', GallonsRequested: 100, FuelType: 'Gasoline', TotalAmountDue: 200, DeliveryAddress: '123 Main St', DeliveryCity: 'City', DeliveryState: 'State', DeliveryZipCode: '12345', DeliveryDate: '2024-04-26T12:00:00Z' }
+                ];
+
+                jasmine.Ajax.install();
+
+                jasmine.Ajax.stubRequest('http://localhost:3000/getAllFuelHistory').andReturn({
+                    status: 200,
+                    responseText: JSON.stringify(historyData)
+                });
+
+                displayFuelHistory();
+
+                setTimeout(function() {
+                    const table = document.querySelector('table');
+                    expect(table).toBeTruthy();
+
+                    const rows = table.querySelectorAll('tr');
+                    expect(rows.length).toBe(2); // Header + 1 row of data
+
+                    jasmine.Ajax.uninstall();
+                    done();
+                }, 1000); // Wait for fetch to complete
+            });
+
+            it('should handle no fuel history', function(done) {
+                jasmine.Ajax.install();
+
+                jasmine.Ajax.stubRequest('http://localhost:3000/getAllFuelHistory').andReturn({
+                    status: 200,
+                    responseText: JSON.stringify([])
+                });
+
+                displayFuelHistory();
+
+                setTimeout(function() {
+                    const message = document.querySelector('p');
+                    expect(message.textContent).toBe('No fuel request history.');
+
+                    jasmine.Ajax.uninstall();
+                    done();
+                }, 1000); // Wait for fetch to complete
+            });
+
+            it('should handle error fetching fuel history', function(done) {
+                jasmine.Ajax.install();
+
+                jasmine.Ajax.stubRequest('http://localhost:3000/getAllFuelHistory').andReturn({
+                    status: 500,
+                    responseText: 'Internal Server Error'
+                });
+
+                displayFuelHistory();
+
+                setTimeout(function() {
+                    const message = document.querySelector('p');
+                    expect(message.textContent).toBe('Error loading fuel history. Please try again later.');
+
+                    jasmine.Ajax.uninstall();
+                    done();
+                }, 1000); // Wait for fetch to complete
+            });
+
+            it('should navigate to profile page', function() {
+                spyOn(window.location, 'href').and.callThrough();
+                viewProfile();
+                expect(window.location.href).toBe('Profile.html');
+            });
+
+            it('should navigate to request fuel page', function() {
+                spyOn(window.location, 'href').and.callThrough();
+                requestFuel();
+                expect(window.location.href).toBe('RequestFuelQuota.html');
+            });
+        });
+    </script>
+</body>
+</html>
 
