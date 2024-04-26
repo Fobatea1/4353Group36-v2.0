@@ -108,19 +108,36 @@
     </div>
 
     <script>
-        function calculateTotalAmount() {
-            const gallons = parseFloat(document.getElementById('GallonsRequested').value);
-            const pricePerGallon = parseFloat(document.getElementById('FuelType').value);
-            if (!isNaN(gallons) && !isNaN(pricePerGallon)) {
-                const totalAmount = gallons * pricePerGallon;
-                document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
-            } else {
-                document.getElementById('TotalAmountDue').textContent = `$0.00`;
-            }
-        }
 
-        document.getElementById('GallonsRequested').addEventListener('input', calculateTotalAmount);
-        document.getElementById('FuelType').addEventListener('change', calculateTotalAmount);
+    function calculateMargin(gallons, state) {
+        const currentPricePerGallon = 1.50; // Static base price
+        const locationFactor = state === "TX" ? 0.02 : 0.04;
+        const rateHistoryFactor = 0.01; // Assuming some history for simplicity, adjust as needed
+        const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+        const companyProfitFactor = 0.10;
+
+        return currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+    }
+
+    function calculateTotalAmount() {
+        const gallons = parseFloat(document.getElementById('GallonsRequested').value);
+        const state = document.getElementById('DeliveryState').value;
+        const basePricePerGallon = parseFloat(document.getElementById('FuelType').value);
+
+        if (!isNaN(gallons) && !isNaN(basePricePerGallon) && state) {
+            const margin = calculateMargin(gallons, state);
+            const pricePerGallon = basePricePerGallon + margin;
+            const totalAmount = gallons * pricePerGallon;
+            document.getElementById('TotalAmountDue').textContent = `$${totalAmount.toFixed(2)}`;
+        } else {
+            document.getElementById('TotalAmountDue').textContent = `$0.00`;
+        }
+    }
+
+    document.getElementById('GallonsRequested').addEventListener('input', calculateTotalAmount);
+    document.getElementById('FuelType').addEventListener('change', calculateTotalAmount);
+    document.getElementById('DeliveryState').addEventListener('change', calculateTotalAmount);
+
 
         document.getElementById('fuelQuotaForm').addEventListener('submit', function(event) {
             event.preventDefault();
